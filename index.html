@@ -18,7 +18,7 @@
 <body>
     <!--VISOR 360º-->
     <div id="btnAcceso360" class="view360 showVisor360" style="width:100px; height:60px; align-items:center; text-align:center; z-index:10000; position:absolute; bottom:8vh; right:3.4vw; background-color:white; color:white; padding:5px 10px; font-size: 1.5rem; border: 1px solid gray; border-radius: 5px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px white; user-select:none; visibility:hidden;">
-        <img src="./images/_360view.gif" class="view360" width="80" alt="Alternate Text" style="user-select:none;"/>
+        <img src="images/360view.gif" class="view360" width="80" alt="Alternate Text" style="user-select:none;"/>
         <!--<span style="color:darkblue; font-size:1em;"><i class="fas fa-sign-out-alt fa-2x"></i></span>-->
     </div>
 
@@ -147,15 +147,15 @@
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li class="nav-item files-load active">
                     <a class="nav-link" href="#" id="btn_img" onclick="$('#files-input').click();">Imagenenes <span class="sr-only">(current)</span></a>
-                    <img id="imgImagenes" src="./images/_uncheck.png" width=24 style="margin-left:-10px;" />
+                    <img id="imgImagenes" src="images/uncheck.png" width=24 style="margin-left:-10px;" />
                 </li>
                 <li class="nav-item files-load active">
                     <a class="nav-link" href="#" onclick="$('#gpx').click();" style="margin-left:10px;">GPX <span class="sr-only">(current)</span></a>
-                    <img id="imgGPX" src="./images/_uncheck.png" width=24 style="margin-left:-10px;" />
+                    <img id="imgGPX" src="images/uncheck.png" width=24 style="margin-left:-10px;" />
                 </li>
                 <li class="nav-item files-load active">
                     <a class="nav-link" href="#" id="btn_scv" onclick="$('#file-input').click();" style="margin-left:10px;">Progresiva <span class="sr-only">(current)</span></a>
-                    <img id="imgProgresivas" src="./images/_uncheck.png" width=24 style="margin-left:-10px;" />
+                    <img id="imgProgresivas" src="images/uncheck.png" width=24 style="margin-left:-10px;" />
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">|<span class="sr-only">(current)</span></a>
@@ -782,7 +782,7 @@
                 listaLatLngClick.push(latlngs[i]['lat']);
             }
 
-            $("#imgGPX").attr("src", "./images/_check.png");
+            $("#imgGPX").attr("src", "images/check.png");
             accederOpcionesInterfaz(true);
             $("#btnAcceso360").css("visibility", "visible").fadeTo(0, 0, "linear").fadeTo(500, 1, "linear");
 
@@ -837,7 +837,7 @@
             return;
         } else if (files.length == 1) {
             alert('Archivo de Progresivas cargado');
-            $("#imgProgresivas").attr("src", "./images/_check.png");
+            $("#imgProgresivas").attr("src", "images/check.png");
             var file = files[0];
             var reader = new FileReader();
             reader.readAsText(file);
@@ -915,7 +915,7 @@
                                     $("#txtProgIni").attr("placeholder", progIni);
                                     $("#txtProgFin").attr("placeholder", progFin);
 
-                                    $("#imgImagenes").attr("src", "./images/_check.png");
+                                    $("#imgImagenes").attr("src", "images/check.png");
 
                                     alert(contImage + " Fotos cargadas correctamente!!!");
                                 }
@@ -1039,7 +1039,7 @@
             } else if ($("#btnAcceso360").hasClass("showVisor360") == false) {
                 $("#btnAcceso360").addClass("showVisor360");
                 btnAcceso360.removeChild(btnAcceso360.firstChild);
-                btnAcceso360.innerHTML = "<img src='./images/_360view.gif' class='view360' width='80' alt='Alternate Text' style='user - select: none;' />"; //.fadeTo(0, 0, "linear").fadeTo(500, 1, "linear");
+                btnAcceso360.innerHTML = "<img src='images/360view.gif' class='view360' width='80' alt='Alternate Text' style='user - select: none;' />"; //.fadeTo(0, 0, "linear").fadeTo(500, 1, "linear");
                 mostrarVisorFoto();
                 //document.dispatchEvent(new KeyboardEvent("keypress", { keyCode: 13 }));
             }
