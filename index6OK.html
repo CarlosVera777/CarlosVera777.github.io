@@ -1,0 +1,1144 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="../fonts/font-awesome.min.4.2.0.css" />
+    <link rel='stylesheet' href='../css/bootstrap-min.4.0.0.css'>
+    <script src="../js/UTMLatLng.js"></script>
+
+    <script src="../js/font-awesome.min.5.0.11.js"></script>
+    <link rel="stylesheet" href="../css/font-awesome.min.5.0.11.css" />
+
+    <script src="../js/super-three-min.0.119.0.js"></script>
+    <script src="../js/aframe.min-1.0.4.js"></script>
+</head>
+<body>
+    <!--VISOR 360º-->
+    <div id="btnAcceso360" class="view360 showVisor360" style="width:100px; height:60px; align-items:center; text-align:center; z-index:10000; position:absolute; bottom:8vh; right:3.4vw; background-color:white; color:white; padding:5px 10px; font-size: 1.5rem; border: 1px solid gray; border-radius: 5px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px white; user-select:none; visibility:hidden;">
+        <img src="images/_360view.gif" class="view360" width="80" alt="Alternate Text" style="user-select:none;"/>
+        <!--<span style="color:darkblue; font-size:1em;"><i class="fas fa-sign-out-alt fa-2x"></i></span>-->
+    </div>
+
+    <canvas id="visorFoto" width="1080" height="937" style="border:1px solid black; position:absolute; top: 56px; right:75px; background-color:white;"></canvas>
+
+    <style>
+        /*#btnAcceso360:hover {
+            background-color: gray !important;
+        }*/
+
+        .rotulo {
+            background-image: linear-gradient(to bottom, #eab833 0%, #ffd054 51%, #eab833 100%);
+        }
+
+        .hideFront {
+            animation-duration: 0.5s;
+            animation-name: fronthide;
+            animation-timing-function: ease-in;
+        }
+
+        .showFront {
+            animation-duration: 0.5s;
+            animation-name: frontshow;
+            animation-timing-function: ease-in;
+        }
+
+        .hideBack {
+            animation-duration: 0.5s;
+            animation-name: backhide;
+            animation-timing-function: ease-in;
+        }
+
+        .showBack {
+            animation-duration: 0.5s;
+            animation-name: backshow;
+            animation-timing-function: ease-in;
+        }
+
+        @keyframes frontshow {
+            from {
+                top: -110px;
+            }
+
+            to {
+                top: 0px;
+            }
+        }
+
+        @keyframes fronthide {
+            from {
+                top: 0px;
+            }
+
+            to {
+                top: -110px;
+            }
+        }
+
+        @keyframes backshow {
+            from {
+                top: 0px;
+            }
+
+            to {
+                top: -110px;
+            }
+        }
+
+        @keyframes backhide {
+            from {
+                top: -110px;
+            }
+
+            to {
+                top: 0px;
+            }
+
+            100% {
+            }
+        }
+    </style>
+
+
+    <div id="divDirection" class="Front" style="overflow:hidden; height:100px; width:25vw; text-align:center; align-items:center; padding-left:10px; border: 1px solid black;  border-radius: 5px; position:absolute; top: 66px; right:12vw; z-index:1000; background-color:yellow; box-shadow: 10px 10px 5px 0px rgba(87, 81, 81, 0.4); visibility:hidden;" onclick="changeDirection();">
+        <div class="rotulo Front" style="user-select:none; text-align:center; width:24vw; display:block; background-color:yellow; z-index:-1; padding:15px; position:relative; top:0px; overflow:hidden; border:1px solid blue; ">
+            <h1 id="lblDirectionFront" style="font-size:2rem; display:inline;">VISTA FRONTAL</h1>
+            <img src="images/DirectionFront.png" width="100" alt="Direccion Frontal" style="margin-left:30px; background-color:white; border-radius: 5px;" />
+        </div>
+        <div class="rotulo Back" style="user-select:none; text-align:center; width:24vw; display:block; background-color:yellow; z-index:1; padding:15px; position:relative; top:0px; overflow:hidden; border:1px solid blue;">
+            <h1 id="lblDirectionBack" style="font-size:2rem; display:inline;">VISTA POSTERIOR</h1>
+            <img src="images/DirectionBack.png" width="100" alt="Direccion Posterior" style="margin-left:30px; background-color:white; border-radius: 5px;" />
+        </div>
+    </div>
+
+    <!--<canvas id="canvas2" width="1080" height="937" style="border:1px solid black; position:absolute; top: 56px; right:75px;"></canvas>-->
+
+    <script>
+        AFRAME.registerComponent("control-component-orbit", {
+            init: function () {
+                //alert("control");
+                console.log("Iniciando componente...");
+                //console.log(this.el);
+            },
+            tick: function () {
+                //component: orbit-controls
+                var rotation = this.el.getAttribute('rotation');
+                this.el.setAttribute("rotation", { x: 0, y: rotation.y, z: rotation.z });
+            }
+        });
+    </script>
+
+    <link rel="stylesheet" href="../css/leaflet-1.6.0.css">
+    <script src="../js/leaflet-1.6.0.js"></script>
+    <script src="../js/leaflet.geocsv-0.5.0.js"></script>
+    <input type="file" accept=".csv, .txt" id="file-input" style="width: 0px; height: 0px; display: none;" />
+    <input type="file" accept=".jpg" id="files-input" multiple style="width: 0px; height: 0px; display: none;" />
+
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark bg-dark navbar-expand-lg">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+            <a class="navbar-brand" href="#"><i class="fab fa-angular"></i> Itinerario Fílmico</a>
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item files-load active">
+                    <a class="nav-link" href="#" id="btn_img" onclick="$('#files-input').click();">Imagenenes <span class="sr-only">(current)</span></a>
+                    <img id="imgImagenes" src="images/_uncheck.png" width=24 style="margin-left:-10px;" />
+                </li>
+                <li class="nav-item files-load active">
+                    <a class="nav-link" href="#" onclick="$('#gpx').click();" style="margin-left:10px;">GPX <span class="sr-only">(current)</span></a>
+                    <img id="imgGPX" src="images/_uncheck.png" width=24 style="margin-left:-10px;" />
+                </li>
+                <li class="nav-item files-load active">
+                    <a class="nav-link" href="#" id="btn_scv" onclick="$('#file-input').click();" style="margin-left:10px;">Progresiva <span class="sr-only">(current)</span></a>
+                    <img id="imgProgresivas" src="images/_uncheck.png" width=24 style="margin-left:-10px;" />
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">|<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item frame360 active" style="visibility:hidden;">
+                    <a class="nav-link" href="#" id="btn_grid" onclick="crearGrilla();">Grilla <span class="sr-only">(current)</span></a>
+                </li>
+                <!--<li class="nav-item active">
+                    <a class="nav-link" href="#" id="btn_line" onclick="pintarLinea();">Linea <span class="sr-only">(current)</span></a>
+                </li>-->
+            </ul>
+        </div>
+    </nav>
+
+    <style>
+        /*.frame360:focus {
+            background-color:red;
+        }*/
+
+        .nav-item.files-load:hover {
+            background-color: darkgray;
+            border-radius: 2px;
+        }
+        /*.nav-item.files-load {
+            width: 150px;
+        }*/
+        .nav-item * {
+            display: inline-block;
+        }
+    </style>
+
+    <style>
+        a-scene {
+            height: 85.2vh;
+            width: 45vw;
+            right: -25vw !important;
+        }
+    </style>
+
+    <style>
+        #visorFoto { /*canvas1*/
+            width: 1080px;
+            height: 907px;
+            display: block;
+        }
+
+    </style>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col" style="position:absolute; left:0px; height: 80vh; width: 50vw;">
+                <div id="mapid" style="height: 106.7%; width: 100%; border: 1px solid black;">
+                </div>
+            </div>
+
+            <div id="marcoAFrame" class="col" style="visibility:hidden; border:1px solid blue;">
+
+                <a-scene id="scene" cursor="rayOrigin: mouse" embedded>
+                    <a-camera id="camera"
+                              control-component-orbit
+                              mouse-cursor=""
+                              position="0 120 90"
+                              wasd-controls=""
+                              rotation="0 0 0"
+                              look-controls>
+                        <a-entity cursor="fuse: false; fuseTimeout: 500"
+                                  position="0 0 -1"
+                                  geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                                  material="color: black; shader: flat">
+                        </a-entity>
+                    </a-camera>
+
+                    <a-assets>
+                        <svg id="sky0" src=""></svg>
+                    </a-assets>
+                    <a-sky id="target" src="" rotation="0 -90 0"></a-sky>
+                </a-scene>
+
+            </div>
+            <!--    Eje X: Horizontal Izq(-)    Der(+)
+                    Eje Z: Horizontal Atras(-)  Adentante(+)
+                    Eje Y: Vertical   Arriba(+) Abajo(-)        -->
+        </div>
+    </div>
+
+    <style>
+        input {
+            border-color: white;
+            background-color: white;
+        }
+
+            input:invalid {
+                border-color: red;
+                background-color: rgba(193, 66, 66, 0.1);
+            }
+
+            input:valid {
+                border-color: green;
+                background-color: rgba(63, 191, 127, 0.1);
+            }
+    </style>
+
+    <footer class="toolbar toolbar-footer" style="position:absolute; bottom:0px; background-color:lightgray; width:99.4vw; ">
+        <div id="navigatorControls" class="toolbar-actions row">
+            <div class="col-sm-6 ml-4 mt-2 mb-2">
+                <span id="datos"> <!--Progresiva=0--></span>
+            </div>
+
+            <style>
+                input {
+                    width: 120px;
+                    font-size: 2em;
+                    color: blue;
+                }
+                /*input[value] {
+                    }
+                    input[placeholder] {
+                        font-weight:normal;
+                    }*/
+            </style>
+
+            <!--<div class="col-sm-3 mt-2 mb-2 ml-2">-->
+            <div class="col-sm">
+                <button id="btnFirstImage" class="btn btn-lg btn-info align-middle navegation" onclick="nextImage(0);"><i class="fas fa-step-backward"></i></button>
+                <button id="btnPreviewImage" class="btn btn-lg btn-info align-middle navegation" onclick='previewImage();'><i class="fa fa-arrow-alt-circle-left"></i>Anterior </button>
+                <input class="form-control-lg progresiva align-middle navegation" type="text" id="txtProgresiva" name="txtProgresiva" placeholder="999+999" value="" pattern="\d{3}\+\d{3}" maxlength="7" alt="Ingrese progresiva y pulse Enter." required /> <!--title="La progresiva debe ser en el siguiente formato 999+999"-->
+                <button id="btnNextImage" class="btn btn-lg btn-info align-middle navegation" onclick='nextImage();'>Siguiente <i class="fa fa-arrow-circle-right"></i></button>
+                <button id="btnLastImage" class="btn btn-lg btn-info align-middle navegation" onclick="nextImage(contImage-1);"><i class="fas fa-step-forward"></i></button>
+            </div>
+
+            <!--<div class="col-sm-3 mt-2 mb-2">-->
+                <div class="col-sm">
+                    <form id="frmRecorreTramo" onsubmit="recorrerTramo(); return false;">
+                        <button type="submit" id="btnBack" class="btn btn-lg btn-primary align-middle direction" onclick="swDirectionMoveTramo = false; swRecorridoTramo = true;"><i class="fas fa-backward"></i></button>
+                        <input class="form-control-lg progresiva align-middle" type="text" id="txtProgIni" value="" name="txtProgIni" placeholder="" pattern="\d{3}\+\d{3}" title="La progresiva debe ser en el siguiente formato 999+999" maxlength="7" required />
+                        <button type="submit" id="btnPauseStop" class="btn btn-lg btn-primary align-middle pause" style="display:none;"><i class="fas fa-pause"></i></button>
+                        <input class="form-control-lg progresiva align-middle" type="text" id="txtProgFin" value="" name="txtProgFin" placeholder="" pattern="\d{3}\+\d{3}" title="La progresiva debe ser en el siguiente formato 999+999" maxlength="7" required />
+                        <button type="submit" id="btnFront" class="btn btn-lg btn-primary align-middle direction" onclick="swDirectionMoveTramo = true; swRecorridoTramo = true;"><i class="fas fa-forward"></i></button>
+                    </form>
+                </div>
+         </div>
+</footer>
+
+    <script src="../js/bouncemarker-1.2.0.js"></script>
+    <script src="../js/togeojson-0.16.0.js"></script>
+    <script src="../js/leaflet.filelayer-1.2.0.js"></script>
+
+    <script src="../js/svg.min-2.0.0.js"></script>
+    <script src="../js/svg.draw.min-2.0.0.js"></script>
+</body>
+
+<script src='../js/jquery-3.5.1.min.js'></script>
+<script src='../js/popper-1.12.9.min.js'></script>
+<script src='../js/bootstrap.min-4.0.0.js'></script>
+<script src="../js/jquery.mask-1.14.16.js"></script>
+
+<style>
+    div.leaflet-control-filelayer {
+        display: none !important;
+    }
+
+    /*//////////////////////////////////////////*/
+    #visorFoto {
+        height: 968px;
+    }
+
+    a-canvas {
+        height: 99.8%;
+        left: -21px;
+        position: absolute;
+        top: 2px;
+        width: 105%;
+    }
+
+    /*#btnAcceso360 {
+        bottom: 13.8vh !important;
+    }*/
+
+    #mapid {
+        height: 100.3%;
+    }
+    /*//////////////////////////////////////////*/
+
+</style>
+
+<script type="text/javascript">
+    //Proceso de Itinerario filmico:
+    //----------------------------------
+    // 1 Carga de Archivos.
+    //   * Imagenes.
+    //   * Info GPX.
+    //   * Info Progrevisas.
+    // 2 Ubicacion de progresiva [aprox] desde mapa.
+    // 3 Seleccion de Vista de Desplazamieto [Frontal] [Posterior]
+    // 4 Desplazamiento por pregresivas
+    //   * Sucesivas [Anterior] [Siguiente]
+    //   * Pregresivas especificas [999+999]
+    //   * pregresivas especificas [Inicio] [Final]
+    // 5 Vista de progresiva 360º.
+    // 6 Recorrer Tramo especificos [Desde - Hasta]
+    //   * En sentido Adelante [-->]
+    //   * En sentido Atras [<--]
+    //   * Opcion de Control [Pausa] [Continuar] [Interrumpir].
+
+    let oImage = {
+        "image": "",
+        "name": ""
+    };
+
+    var swInicio = true;
+    var widthFotosLoaded = 0;
+    var heightFotosLoaded = 0;
+
+    var indiceTempPausaRecorrido = null;
+    var indiceTempDirectionRecorrido = null;
+    var swRecorridoTramo;
+
+    var L = window.L;
+    var control;
+    var progresivaActual;
+    var marker;
+    var gpxs;
+    var indgpx;
+    var indice = -1;
+    var latlngs;
+    var listaLatLngClick = new Array();
+    var dato = new Array();
+    var listaImagenes = new Array();
+
+    var grid;
+
+    var utm = new UTMLatLng();
+    var item;
+    var mymap;
+
+    var swDirectionFront = true;
+    //true: Adelante:Front
+    //false: Atras:Back
+    var swDirectionMoveTramo = true;
+
+    let contImage = 0;
+    var tramo = new Array();
+
+    //----------------------------------------------------------------------------------------
+
+    // Iniciar mapa
+    addMap();
+    accederOpcionesInterfaz(false);
+
+    //------------------------------------------------------------------------
+    function changeDirection() {
+
+        if ($("#divDirection").hasClass("Front") == true) {
+            swDirectionFront = false;
+
+            setTimeout(function () {
+                nextImage(indice);
+            }, 500);
+
+            $("#divDirection").removeClass("Front").addClass("Back");
+            $(".rotulo.Front").removeClass("showFront").addClass("hideFront").css("top", "-110px");
+            $(".rotulo.Back").removeClass("hideBack").addClass("showBack").css("top", "-110px");
+        } else if ($("#divDirection").hasClass("Back") == true) {
+            swDirectionFront = true;
+
+            setTimeout(function () {
+                nextImage(indice);
+            }, 500);
+
+            $("#divDirection").removeClass("Back").addClass("Front");
+            $(".rotulo.Back").removeClass("showBack").addClass("hideBack").css("top", "0px");
+            $(".rotulo.Front").removeClass("hideFront").addClass("showFront").css("top", "0px");
+        }
+
+    }
+
+    //------------------------------------------------------------------------
+    function drawVisorCanvas(elem, img, directionFront = true) {
+        var sx = 0;
+        var sy = 0;
+
+        if (directionFront == true) {
+            sx = (widthFotosLoaded * 0.8) * (32.2265625 / 100);
+            sy = (heightFotosLoaded * 0.8) * (15.91435185 / 100);
+            //sx = 990;
+            //sy = 275;
+        } else {
+            //jesus
+            sx = (widthFotosLoaded * 0.8) * (83.17057292 / 100); //sx = 2555;
+            sy = (heightFotosLoaded * 0.8) * (15.91435185 / 100); //sy = 275;
+        }
+
+        //Cambiar dimensiones de foto
+        var eCanvas = document.createElement("canvas");
+        var newWidth = widthFotosLoaded * 0.8;
+        var newHeight = heightFotosLoaded * 0.8;
+        eCanvas.width = newWidth;
+        eCanvas.height = newHeight;
+        var ctx = eCanvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, newWidth, newHeight);
+        /*var canvas1 = */
+        elem.getContext("2d").drawImage(eCanvas, sx, sy, 1080, 937, 0, 0, 1080, 937);
+        if (directionFront == false) {
+            elem.getContext("2d").drawImage(eCanvas, 0, sy, 1080, 937, ((widthFotosLoaded * 0.8) * (16.82942708 / 100)), 0, 1080, 937);
+        }
+    }
+
+    //------------------------------------------------------------------------
+    function recorrerTramo() {
+        var progIni = $("#txtProgIni").val().replace("+", " ");
+        var progFin = $("#txtProgFin").val().replace("+", " ");
+
+        if (progIni != "") {
+            indiceProgIni = listaImagenes.findIndex(el => el.name.slice(0, el.name.indexOf(".")) == progIni.replace("+", " "));
+
+            if (progFin != "") {
+                indiceProgFin = listaImagenes.findIndex(el => el.name.slice(0, el.name.indexOf(".")) == progFin.replace("+", " "));
+                //_tramo
+
+                //Deshabilitar botones navegacion
+                $("footer .navegation").attr("disabled",true);
+                $("#frmRecorreTramo button.direction").attr("disabled", true);
+
+                if (indiceTempPausaRecorrido == null) {
+                    tramo = new Array();
+                    var j = 0;
+                    for (var i = indiceProgIni; i <= indiceProgFin; i++) {
+                        var oImage = {
+                            "image": "",
+                            "name": "",
+                            "index": ""
+                        }
+                        oImage.image = listaImagenes[i].image;
+                        oImage.name = listaImagenes[i].name;
+                        oImage.index = i;
+                        tramo[j] = oImage;
+                        j++;
+                    }
+
+                    if (swDirectionMoveTramo == false) {
+                        tramo.reverse();
+                    }
+
+                    //Deshabilitar controles recorrido + mostrar boton pause
+                    $("#btnPauseStop").css("display", "inline-block").fadeTo(0, 0, "linear").fadeTo(1000, 1, "linear");
+                }
+                else {
+                    var btnPauseStop = document.querySelector("#btnPauseStop");
+                    btnPauseStop.removeChild(btnPauseStop.firstChild);
+                    btnPauseStop.innerHTML = "<i class='fas fa-pause'>";
+                    $("#btnPauseStop").removeClass("stop").addClass("pause");
+                }
+
+                try {
+                    //$.fx.interval = 2500;
+                    var fps = 60;
+
+                    (function recorreImages(elem, bgimg) {
+                        if (swRecorridoTramo == true) {
+                            console.log(indice);
+                            console.log("swTramo: " + swRecorridoTramo);
+                            var img;
+                            var index;
+                            var fileName;
+
+                            img = new Image();
+
+                            img.src = bgimg[0].image;
+                            index = bgimg[0].index;
+                            fileName = bgimg[0].name;
+
+                            img.onload = (function (index, fileName) {
+                                indice = index;
+                                setTimeout(function () {
+                                    drawVisorCanvas(elem, img, swDirectionFront);
+                                    $("#txtProgresiva").val(fileName.replace(" ", "+").split(".")[0]);
+                                    try {
+                                        drawMarkerMap();
+                                    } catch (e) {
+                                        console.Log("Verifique la importación de archivos GPX y archivos CSV(progresivas).");
+                                    }
+                                    bgimg = bgimg.splice(1);
+                                    if (bgimg.length > 0) {
+                                        tramo = bgimg;
+                                        recorreImages(elem, tramo);
+                                    } else {
+                                        //_recorre
+                                        $("#btnPauseStop").css("display", "none");
+                                        $("#frmRecorreTramo button").removeAttr("disabled"); //***
+                                        indiceTempPausaRecorrido = null;
+                                        $("footer .navegation").removeAttr("disabled");
+                                    }
+                                }, 500);
+                                //.fadeTo(2500, 1, "linear")
+                                //.fadeTo(2500, 0, "linear")
+                                //.delay(2500, "fx")
+                                //-----------------------------------------------------
+                                //revisar metodos animacion jquery con setTimeout()
+                                //-----------------------------------------------------
+                            })(index, fileName);
+                        }
+
+                    })(document.getElementById("visorFoto"), tramo);    //canvas1
+
+                } catch (e) {
+
+                }
+
+            } else {
+                nextImage(indiceProgIni);
+            }
+        } else {
+            progFin = "";
+        }
+    }
+
+    //------------------------------------------------------------------------
+    function previewImage() {
+        try {
+            if (indice > 0) {
+                if ($("#marcoAFrame").css("visibility") == "hidden") {
+                    indice--;
+                    var img = new Image();
+                    img.src = listaImagenes[indice].image;
+                    img.onload = function () {
+                        drawVisorCanvas(document.getElementById("visorFoto"), img, swDirectionFront);
+                        $("#txtProgresiva").val(listaImagenes[indice].name.replace(" ", "+").split(".")[0]);
+                        $("#txtProgresiva").css("background-color", "white");
+                        progresivaActual = $("#txtProgresiva").val();
+
+                        try {
+                            drawMarkerMap();
+                        } catch (e) {
+                            console.log("Verifique la importación de archivos GPX y archivos CSV(progresivas).");
+                        }
+                    }
+                } else {
+                    $("#btnAcceso360").click();
+                    //mostrarVisorFoto();
+                    //document.dispatchEvent(new KeyboardEvent("keypress", { keyCode: 13 }));
+                }
+            }
+        } catch (e) {
+        }
+    }
+
+    //------------------------------------------------------------------------
+    function recreaEscenaCodigo() {
+        var scene = document.querySelector("#scene");
+
+        while (scene.firstChild) {
+            scene.removeChild(scene.lastChild);
+            AFRAME.scenes[0].renderer.renderLists.dispose();
+            window.THREE.Cache.clear();
+        }
+
+        var marco = document.querySelector("#marcoAFrame");
+        marco.removeChild(marco.firstChild);
+        AFRAME.scenes[0].renderer.renderLists.dispose();
+        window.THREE.Cache.clear();
+
+        marco.innerHTML = "<a-scene id='scene' cursor='rayOrigin: mouse' embedded> " +
+            "	<a-camera id='camera' " +
+            "             control-component-orbit " +
+            "			  mouse-cursor='' " +
+            "			  position='0 120 90' " +
+            "			  wasd-controls='' " +
+            "			  rotation='0 0 0' " +
+            "			  look-controls='' " +
+            "			  aframe-injected=''> " +
+            "		<a-entity cursor='fuse: false; fuseTimeout: 500' " +
+            "				  position='0 0 -1' " +
+            "				  geometry='primitive: ring; radiusInner: 0.02; radiusOuter: 0.03' " +
+            "				  material='color: black; shader: flat'> " +
+            "	    </a-entity> " +
+            "	</a-camera> " +
+            "	<a-assets> " +
+            "   	<img id='sky0' src=''> " +
+            "	</a-assets> " +
+            "	<a-sky id='target' src=" + listaImagenes[indice] + " rotation='0 -90 0'></a-sky> " +
+            "</a-scene> ";
+    }
+
+    //------------------------------------------------------------------------
+    function nextImage(progresiva = null) {
+        if (progresiva != null) {
+            indice = progresiva - 1;
+        }
+
+        try {
+            if (indice < contImage - 1) {
+                if ($("#marcoAFrame").css("visibility") == "hidden") {
+                    indice++;
+                    var img = new Image();
+                    img.src = listaImagenes[indice].image;
+                    img.onload = function () {
+                        drawVisorCanvas(document.getElementById("visorFoto"), img, swDirectionFront);
+                        $("#txtProgresiva").val(listaImagenes[indice].name.replace(" ", "+").split(".")[0]);
+                        $("#txtProgresiva").css("background-color", "white");
+                        progresivaActual = $("#txtProgresiva").val();
+
+                        try {
+                            drawMarkerMap();
+                        } catch (e) {
+                            console.error("Verifique la importación de archivos GPX y archivos CSV(progresivas).");
+                        }
+                    }
+                } else {
+                    $("#btnAcceso360").click();
+                    //mostrarVisorFoto();
+                }
+            }
+        } catch (e) {
+        }
+    }
+
+    //------------------------------------------------------------------------
+    function drawMarkerMap() {
+        var item = utm.convertLatLngToUtm(latlngs[indice]['lat'], latlngs[indice]['lng'], 10);
+        document.getElementById("datos").innerHTML = ` &nbsp;Latitud: ${Math.round(latlngs[indice]['lat'] * 1000000) / 1000000} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Longitud: ${Math.round(latlngs[indice]['lng'] * 1000000) / 1000000} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Este: ${Math.round(item['Easting'] * 100) / 100} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Norte: ${Math.round(item['Northing'] * 100) / 100}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Huso: ${item['ZoneNumber']} ${item['ZoneLetter']}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Altura: ${Math.trunc(latlngs[indice]['alt'])} mts. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Progresiva: ${Math.round(dato[indice])} mts.`;
+
+        try {
+            if (swInicio == false) {
+                if (indice == 0) {
+                    mymap.removeLayer(marker);
+                    marker = new L.Marker([latlngs[indice]['lat'], latlngs[indice]['lng']], {})
+                    marker.addTo(mymap)
+                        .bindPopup("<b>Proyecto Mavice Consult SAC</b><br />Punto Inicial").openPopup();
+                } else if (indice > 0 && indice != (contImage - 1)) {
+                    mymap.removeLayer(marker);
+                    marker = new L.Marker([latlngs[indice]['lat'], latlngs[indice]['lng']], {});
+                    marker.addTo(mymap);
+                }
+                else if (indice == (contImage - 1)) {
+                    mymap.removeLayer(marker);
+                    marker = new L.Marker([latlngs[indice]['lat'], latlngs[indice]['lng']], {})
+                    marker.addTo(mymap)
+                        .bindPopup("<b>Proyecto Mavice Consult SAC</b><br />Punto Final").openPopup();
+                }
+            }
+
+        } catch (e) {
+            //marker = new L.Marker([latlngs[0]['lat'], latlngs[0]['lng']], { bounceOnAdd: true }).addTo(mymap)
+            //    .bindPopup("<b>Proyecto Mavice Consult SAC</b><br />Punto Inicial").openPopup(); //.onMapClick();
+        }
+    }
+
+    //------------------------------------------------------------------------
+    function crearGrilla() {
+        var scene = document.querySelector("a-scene").object3D;
+
+        if (grid !== undefined) {
+            scene.remove(grid);
+            grid = undefined;
+        }
+        else {
+            //grid = new THREE.GridHelper(210, 39, "yellow", "white");
+            grid = new THREE.GridHelper(650, 39, "yellow", "white");
+            grid.position.z = 0
+            grid.position.x = 2
+            grid.position.y = -15
+            grid.rotation.x = 0
+            grid.rotation.y = 0
+            grid.rotation.z = 0
+
+            grid.name = "gridhelper";
+
+            scene.add(grid);
+        }
+        //$("#txtProgresiva").focus();
+        //scene.GridHelper.setAttribute("divisions", "20");
+    }
+
+    //------------------------------------------------------------------------
+    function addMap() {
+        //Configurar parametro de coordenadas del Mapa. --------------
+        // [ -14.318023407831788 , -71.833500433713198 ]  // [51.505, -0.09]
+        mymap = L.map('mapid').setView([0, 0], 2);
+        var contribution = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox/streets-v9', //satellite-v9
+            tileSize: 512,
+            zoomOffset: -1,
+            accessToken: 'pk.eyJ1IjoiY2FybG9zdmVyYTc3NyIsImEiOiJjazZtdXVmMmYwNHJuM3JwZ205bHJyNWpmIn0.Nvt1C_QPgbCbcnRHz75J4g'
+        });
+        mymap.addLayer(contribution);
+
+        // + Abrir y cargar archivo GPX -----------------------------------------------------------
+        var style = {
+            color: 'blue',
+            opacity: 1.0,
+            fillOpacity: 1.0,
+            weight: 5,
+            clickable: true
+        };
+
+        L.Control.FileLayerLoad.LABEL = '<img id="gpx" class="icon" src="folder.svg" style="height:100px;" alt="file icon"/>';
+
+        control = L.Control.fileLayerLoad({
+            fitBounds: true,
+            layerOptions: {
+                style: style
+                ,
+                pointToLayer: function (data, latlng) {
+                    return L.circleMarker(
+                        latlng,
+                        { style: style }
+                    )
+                }
+            }
+        });
+
+        control.addTo(mymap);
+
+        control.loader.on('data:loaded', function (e) {
+            gpxs = e.target._map;
+            indgpx = e.layer._leaflet_id;
+            latlngs = gpxs._layers[indgpx]._layers[indgpx - 1]._latlngs;
+            var val = latlngs.length;
+
+            for (let i = 0; i < val; i++) {
+                listaLatLngClick.push(latlngs[i]['lat']);
+            }
+
+            $("#imgGPX").attr("src", "images/_check.png");
+            accederOpcionesInterfaz(true);
+            $("#btnAcceso360").css("visibility", "visible").fadeTo(0, 0, "linear").fadeTo(500, 1, "linear");
+
+            swInicio = true;
+
+            setTimeout(function () {
+                //marker = new L.Marker([-14.318023407831788, -71.833500433713198], { bounceOnAdd: true }).addTo(mymap)
+                marker = new L.Marker([latlngs[0]['lat'], latlngs[0]['lng']], { bounceOnAdd: true }).addTo(mymap)
+                    .bindPopup("<b>Proyecto Mavice Consult SAC</b><br />Punto Inicial").openPopup(); //.onMapClick();
+
+                //_ojo: controlar 1 foto
+
+                mymap.removeEventListener("click");
+
+                //---------------------------------------------------------
+                mymap.on('click', function (e) {
+                    var latClicklat;
+                    var latClicklng;
+                    latClicklat = e.latlng.lat;
+                    latClicklng = e.latlng.lng;
+                    var masCercano = listaLatLngClick.reduce(function (prev, curr) {
+                        return (Math.abs(curr - latClicklng) < Math.abs(prev - latClicklng) ? curr : prev), (Math.abs(curr - latClicklat) < Math.abs(prev - latClicklat) ? curr : prev);
+                    });
+
+                    indice = listaLatLngClick.indexOf(parseFloat(masCercano));
+
+                    nextImage();
+
+                    item = utm.convertLatLngToUtm(latlngs[indice]['lat'], latlngs[indice]['lng'], 10);
+                    document.getElementById("datos").innerHTML = ` &nbsp;Latitud: ${Math.round(latlngs[indice]['lat'] * 1000000) / 1000000} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Longitud: ${Math.round(latlngs[indice]['lng'] * 1000000) / 1000000} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Este: ${Math.round(item['Easting'] * 100) / 100} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Norte: ${Math.round(item['Northing'] * 100) / 100}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Huso: ${item['ZoneNumber']} ${item['ZoneLetter']}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Altura: ${latlngs[indice]['alt']}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Progresiva: ${Math.round(dato[indice])} mts.`;
+
+                    mymap.removeLayer(marker);
+                    marker = new L.Marker([latlngs[indice]['lat'], latlngs[indice]['lng']], {});
+                    marker.addTo(mymap);
+                });
+
+            }, 1000);
+
+            nextImage(0);
+            swInicio = false;
+
+        });
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////++++++++++++++++++++++++++
+
+    //------------------------------------------------------------------------
+    function handleFileSelect(e) {
+        var files = e.target.files;
+        if (files.length < 1) {
+            alert('select a file...');
+            return;
+        } else if (files.length == 1) {
+            alert('Archivo de Progresivas cargado');
+            $("#imgProgresivas").attr("src", "images/_check.png");
+            var file = files[0];
+            var reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = function () {
+                //alert(files[0].name);
+                var extensions = new RegExp(/(.csv)$/i);
+
+                if (!extensions.test(files[0].name)) {
+                    throw 'Seleccione archivo del tipo: CSV';
+                } else {
+                    dato = reader.result.split('\n');
+                    var controls = $("#navigatorControls button, #navigatorControls input");
+                    controls.length;
+                    for (var i = 0; i < controls.length; i++) {
+                        $(controls[i]).attr("disabled", false);
+                    }
+                }
+            };
+        }
+    }
+
+    //------------------------------------------------------------------------
+    function handleImagesSelect(e) {
+        listaImagenes = [];
+        contImage = 0;
+        var files = document.querySelector("#files-input").files;
+        var nroFilesSelected = files.length;
+
+        if (files.length < 1) {
+            alert('select a file...');
+            return;
+        } else {
+            for (var i = 0; i < files.length; i++) {
+                let file = files[i];
+                var extensions = new RegExp(/(.jpg)$/i);
+
+                if (!extensions.test(file.name)) {
+                    throw 'Seleccione archivo del tipo: jpg';
+                } else {
+                    var fileIndex = i;
+                    var reader = new FileReader();
+                    reader.onload = (function (fileName, fileIndex) {
+                        return function (e) {
+                            var picReader = e.target;
+                            var oImage = {
+                                "image": picReader.result,
+                                "name": fileName,
+                                "index": fileIndex
+                            };
+
+                            listaImagenes[fileIndex] = oImage;
+                            contImage++;
+
+                            if (fileIndex == 0) {
+                                var foto = new Image();
+                                foto.src = oImage.image;
+                                foto.onload = function (e) {
+                                    widthFotosLoaded = e.target.width;
+                                    heightFotosLoaded = e.target.height;
+                                }
+                            }
+
+                            if (nroFilesSelected == contImage) {
+                                if (nroFilesNotFound > 0) {
+                                    alert("Error al cargar" + nroFilesNotFound + " archivos.\nVerifique...");
+                                }
+                                else {
+                                    recreaEscenaCodigo();
+
+                                    nextImage();
+
+                                    //Dar formato a controles de navegacion ---------------------------------------
+                                    var progIni = listaImagenes[0].name.split(".")[0].replace(" ", "+");
+                                    var progFin = listaImagenes[contImage-1].name.split(".")[0].replace(" ", "+");
+                                    $("#txtProgIni").attr("placeholder", progIni);
+                                    $("#txtProgFin").attr("placeholder", progFin);
+
+                                    $("#imgImagenes").attr("src", "images/_check.png");
+
+                                    alert(contImage + " Fotos cargadas correctamente!!!");
+                                }
+                            }
+                        }
+                    })(file.name, fileIndex);
+
+                    reader.addEventListener("error", function (e) {
+                        nroFilesNotFound++;
+                    });
+
+                    let nroFilesNotFound = 0;
+
+                    if (file) {
+                        reader.readAsDataURL(file);
+                    }
+                }
+            }
+        }
+    }
+
+    // --------------------------------------------------------------------------------------------------
+    function accederOpcionesInterfaz(swView) {
+        if (swView == true) {
+            //$("#navigatorControls button, #navigatorControls input").attr("disabled",true);
+            var controls = $("#navigatorControls button, #navigatorControls input");
+            controls.length;
+            for (var i = 0; i < controls.length; i++) {
+                $(controls[i]).attr("disabled", false);
+            }
+            $("#divDirection").css("visibility", "visible").fadeTo(0, 0, "linear").fadeTo(500, 1, "linear");
+        } else if (swView == false) {
+            //$("#navigatorControls button, #navigatorControls input").attr("disabled",true);
+            var controls = $("#navigatorControls button, #navigatorControls input");
+            controls.length;
+            for (var i = 0; i < controls.length; i++) {
+                $(controls[i]).attr("disabled", true);
+            }
+            $("#divDirection").css("visibility", "hidden");
+        }
+    }
+
+
+
+    // --------------------------------------------------------------------------------------------------
+    // Cargado el DOM------------------------------------------------------------------------------------
+
+    $(function () {
+        $(".progresiva").mask("999+000");
+
+        $('#file-input').change(handleFileSelect);
+        $('#files-input').change(handleImagesSelect);
+
+        function cambiarDireccionCamara(pX, pY, pZ) {
+            var lookControls = document.querySelector("#camera").components["look-controls"];
+            lookControls.pitchObject.rotation.x = pX;
+            lookControls.yawObject.rotation.y = pY;
+        }
+
+        function mostrarVisorFoto() {
+            ocultarFrameAnimation360();
+        }
+
+        //------------------------------------------------------------------------
+        //document.addEventListener("keypress", function (e) {
+        //    if (e.keyCode == 13) {
+        //        ocultarFrameAnimation360();
+        //    }
+        //});
+
+        function ocultarFrameAnimation360() {
+            //Ocultar Frame360 con Animacion
+            $("#marcoAFrame").css("visibility", "hidden").fadeOut(1000, "linear");
+            $("#divDirection").css("visibility", "visible");
+            $(".frame360").css("visibility", "hidden");
+        }
+
+        //------------------------------------------------------------------------
+        //document.querySelector("#visorFoto").addEventListener("click", function () {
+        function mostrarMarcoAFrame360() {
+            try {
+                document.querySelector("a-sky").setAttribute("src", listaImagenes[indice].image);
+            } catch (e) {
+                document.querySelector("a-sky").setAttribute("src", listaImagenes[0].image);
+            }
+
+            //cambiar rotacion de Escena - [OK]
+            if (swDirectionFront == true) {
+                cambiarDireccionCamara(0, 0, 0);
+            } else if (swDirectionFront == false) {
+                cambiarDireccionCamara(0, -179.11, 0);
+            }
+
+            //Mostrar Frame360
+            $("#marcoAFrame").css("visibility", "visible").fadeIn(1500, "linear");
+            $("#divDirection").css("visibility", "hidden");
+            //_visorFoto  
+            $(".frame360").css("visibility", "visible");
+        }
+        //});
+
+        //------------------------------------------------------------------------
+        document.querySelector("#btnAcceso360").addEventListener("click", optionShowFrame360);
+
+        function optionShowFrame360() {
+            var btnAcceso360 = document.querySelector("#btnAcceso360");
+
+            if ($("#btnAcceso360").hasClass("showVisor360") == true) {
+                $("#btnAcceso360").removeClass("showVisor360");
+                btnAcceso360.removeChild(btnAcceso360.firstChild);
+                btnAcceso360.innerHTML = "<span style='color: darkblue; font-size: 1em;'><i class='fas fa-sign-out-alt fa-2x'></i></span>"; //.fadeTo(0, 0, "linear").fadeTo(500, 1, "linear");
+
+                /// Modificar tamaño MarcoFrame360 **************************************************************
+                $("#scene").css("left", "539px");
+                //$("#scene").css("height", "79.8vh");
+                $("#scene").css("width", "47.3vW");
+                /// Modificar tamaño MarcoFrame360 **************************************************************
+                mostrarMarcoAFrame360();
+
+                //$("#visorFoto").click();
+            } else if ($("#btnAcceso360").hasClass("showVisor360") == false) {
+                $("#btnAcceso360").addClass("showVisor360");
+                btnAcceso360.removeChild(btnAcceso360.firstChild);
+                btnAcceso360.innerHTML = "<img src='images/_360view.gif' class='view360' width='80' alt='Alternate Text' style='user - select: none;' />"; //.fadeTo(0, 0, "linear").fadeTo(500, 1, "linear");
+                mostrarVisorFoto();
+                //document.dispatchEvent(new KeyboardEvent("keypress", { keyCode: 13 }));
+            }
+
+            document.querySelector("#btnAcceso360").removeEventListener("click", optionShowFrame360);
+            $("#btnAcceso360").css("background-color", "gray");
+
+            setTimeout(function () {
+                document.querySelector("#btnAcceso360").addEventListener("click", optionShowFrame360);
+                $("#btnAcceso360").css("background-color", "white");
+            },1500);
+                //_clickbtnacceso
+        }
+
+
+        ////------------------------------------------------------------------------
+        //document.querySelector(".frame360").addEventListener("keypress", function (e) {
+        //    alert("keypress frame");
+        //    if (e.keyCode == 13) {
+        //        ocultarFrameAnimation360();
+        //    }
+        //});
+
+        //document.querySelector(".frame360").addEventListener("click", function (e) {
+        //    document.dispatchEvent(new KeyboardEvent("keypress", { keyCode: 13 }));
+        //});
+
+        //------------------------------------------------------------------------
+        document.getElementById("txtProgresiva").addEventListener("keypress", function (e) {
+            if (e.keyCode == 13) {
+                var progIni = $("#txtProgresiva").val().replace("+", " ");
+                var progresiva = listaImagenes.findIndex(el => el.name.slice(0, el.name.indexOf(".")) == progIni.replace("+", " "));
+
+                if (progresiva != -1) {
+                    indiceProgIni = progresiva;
+                    nextImage(indiceProgIni);
+                    $("#txtProgresiva").css("background-color", "white");
+                } else {
+                    $("#txtProgresiva").css("background-color", "red");
+                    setTimeout(function () {
+                        $("#txtProgresiva").css("background-color", "white");
+                        $("#txtProgresiva").val(progresivaActual);
+                    }, 1000);
+
+                }
+                //_prog
+            }
+        });
+
+        //------------------------------------------------------------------------
+        document.getElementById("btnPauseStop").addEventListener("click", function () {
+            if ($("#btnPauseStop").hasClass("pause") == true) {
+                setTimeout(function () {
+                    //deshabilitar botones direccionales
+                    if (swDirectionMoveTramo == true) {
+                        $("#btnFront").removeAttr("disabled");
+                    } else if (swDirectionMoveTramo == false) {
+                        $("#btnBack").removeAttr("disabled");
+                    }
+
+                    //cambiar clase pause x stop
+                    $("#btnPauseStop").removeClass("pause");
+                    $("#btnPauseStop").addClass("stop");
+                    //Cambiar boton pause x stop
+
+                    var btnPauseStop = document.querySelector("#btnPauseStop");
+                    btnPauseStop.removeChild(btnPauseStop.firstChild);
+                    btnPauseStop.innerHTML = "<i class='fas fa-stop'>";
+                }, 1);
+
+                indiceTempPausaRecorrido = indice;
+                swRecorridoTramo = false;
+
+            } else if ($("#btnPauseStop").hasClass("stop") == true) {
+                setTimeout(function () {
+                    $("#btnPauseStop").css("display", "none");
+
+                    //cancelar recorrido y reiniciar a cero
+                    $("#txtProgIni").val('');
+                    $("#txtProgFin").val('');
+
+                    $("#frmRecorreTramo button.direction").removeAttr("disabled");
+
+                    //cambiar clase pause x stop
+                    $("#btnPauseStop").removeClass("stop").addClass("pause");
+                    //Cambiar boton stop x pause
+
+                    var btnPauseStop = document.querySelector("#btnPauseStop");
+                    btnPauseStop.removeChild(btnPauseStop.firstChild);
+                    btnPauseStop.innerHTML = "<i class='fas fa-pause'>";
+                    $("footer .navegation").removeAttr("disabled");
+                }, 1);
+
+                indiceTempPausaRecorrido = null;
+            }
+        });
+
+    });
+
+</script>
+
+</html>
