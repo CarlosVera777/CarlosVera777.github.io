@@ -17,12 +17,12 @@
 </head>
 <body>
     <!--VISOR 360º-->
-    <div id="btnAcceso360" class="view360 showVisor360" style="width:100px; height:60px; align-items:center; text-align:center; z-index:10000; position:absolute; bottom:8vh; right:3.4vw; background-color:white; color:white; padding:5px 10px; font-size: 1.5rem; border: 1px solid gray; border-radius: 5px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px white; user-select:none; visibility:hidden;">
+    <div id="btnAcceso360" class="view360 showVisor360" style="width:100px; height:60px; align-items:center; text-align:center; z-index:10000; position:absolute; bottom:7vh; right:1.1vw; background-color:white; color:white; padding:5px 10px; font-size: 1.5rem; border: 1px solid gray; border-radius: 5px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px white; user-select:none; visibility:hidden;">
         <img src="images/360view.gif" class="view360" width="80" alt="Alternate Text" style="user-select:none;"/>
         <!--<span style="color:darkblue; font-size:1em;"><i class="fas fa-sign-out-alt fa-2x"></i></span>-->
     </div>
 
-    <canvas id="visorFoto" width="1080" height="937" style="border:1px solid black; position:absolute; top: 56px; right:75px; background-color:white;"></canvas>
+    <canvas id="visorFoto" width="1080" height="774" style="border:1px solid black; position:absolute; top: 56px; right:10px; background-color:white;"></canvas>
 
     <style>
         /*#btnAcceso360:hover {
@@ -102,12 +102,12 @@
     </style>
 
 
-    <div id="divDirection" class="Front" style="overflow:hidden; height:100px; width:25vw; text-align:center; align-items:center; padding-left:10px; border: 1px solid black;  border-radius: 5px; position:absolute; top: 66px; right:12vw; z-index:1000; background-color:yellow; box-shadow: 10px 10px 5px 0px rgba(87, 81, 81, 0.4); visibility:hidden;" onclick="changeDirection();">
-        <div class="rotulo Front" style="user-select:none; text-align:center; width:24vw; display:block; background-color:yellow; z-index:-1; padding:15px; position:relative; top:0px; overflow:hidden; border:1px solid blue; ">
+    <div id="divDirection" class="Front" style="overflow:hidden; height:100px; width:27.5vw; text-align:center; align-items:center; padding-left:10px; border: 1px solid black;  border-radius: 5px; position:absolute; top: 66px; right:12vw; z-index:1000; background-color:yellow; box-shadow: 10px 10px 5px 0px rgba(87, 81, 81, 0.4); visibility:hidden;" onclick="changeDirection();">
+        <div class="rotulo Front" style="user-select:none; text-align:center; width:26vw; display:block; background-color:yellow; z-index:-1; padding:15px; position:relative; top:0px; overflow:hidden; border:1px solid blue; ">
             <h1 id="lblDirectionFront" style="font-size:2rem; display:inline;">VISTA FRONTAL</h1>
             <img src="images/DirectionFront.png" width="100" alt="Direccion Frontal" style="margin-left:30px; background-color:white; border-radius: 5px;" />
         </div>
-        <div class="rotulo Back" style="user-select:none; text-align:center; width:24vw; display:block; background-color:yellow; z-index:1; padding:15px; position:relative; top:0px; overflow:hidden; border:1px solid blue;">
+        <div class="rotulo Back" style="user-select:none; text-align:center; width:26vw; display:block; background-color:yellow; z-index:1; padding:15px; position:relative; top:0px; overflow:hidden; border:1px solid blue;">
             <h1 id="lblDirectionBack" style="font-size:2rem; display:inline;">VISTA POSTERIOR</h1>
             <img src="images/DirectionBack.png" width="100" alt="Direccion Posterior" style="margin-left:30px; background-color:white; border-radius: 5px;" />
         </div>
@@ -190,7 +190,7 @@
     <style>
         a-scene {
             height: 85.2vh;
-            width: 45vw;
+            width: 50.3vw;
             right: -25vw !important;
         }
     </style>
@@ -198,7 +198,7 @@
     <style>
         #visorFoto { /*canvas1*/
             width: 1080px;
-            height: 907px;
+            height: 774px !important;
             display: block;
         }
 
@@ -327,12 +327,20 @@
         height: 968px;
     }
 
-    a-canvas {
+    /* a-canvas {
         height: 99.8%;
         left: -21px;
         position: absolute;
         top: 2px;
         width: 105%;
+    } */
+
+    a-canvas {
+        height: 99.8%;
+        left: -21px;
+        position: absolute;
+        top: 2px;
+        width: 106.2%;
     }
 
     /*#btnAcceso360 {
@@ -443,14 +451,16 @@
         var sy = 0;
 
         if (directionFront == true) {
-            sx = (widthFotosLoaded * 0.8) * (32.2265625 / 100);
-            sy = (heightFotosLoaded * 0.8) * (15.91435185 / 100);
-            //sx = 990;
-            //sy = 275;
+            sx = (widthFotosLoaded * 0.8) * (32.2265625 / 100);     //sx = 990;
+            sy = (heightFotosLoaded * 0.8) * (15.91435185 / 100);   //sy = 275;
+            sx = 870;
+            sy = 435;
         } else {
             //jesus
             sx = (widthFotosLoaded * 0.8) * (83.17057292 / 100); //sx = 2555;
             sy = (heightFotosLoaded * 0.8) * (15.91435185 / 100); //sy = 275;
+            sx = 2480;
+            sy = 290;
         }
 
         //Cambiar dimensiones de foto
@@ -463,8 +473,13 @@
         ctx.drawImage(img, 0, 0, newWidth, newHeight);
         /*var canvas1 = */
         elem.getContext("2d").drawImage(eCanvas, sx, sy, 1080, 937, 0, 0, 1080, 937);
-        if (directionFront == false) {
-            elem.getContext("2d").drawImage(eCanvas, 0, sy, 1080, 937, ((widthFotosLoaded * 0.8) * (16.82942708 / 100)), 0, 1080, 937);
+        // if (directionFront == false) {
+        //     elem.getContext("2d").drawImage(eCanvas, 0, sy, 1080, 937, ((widthFotosLoaded * 0.8) * (16.82942708 / 100)), 0, 1080, 937);
+        // }
+
+        elem.getContext("2d").drawImage(eCanvas, sx, sy, 1080, 774, 0, 0, 1080, 774);
+        if (directionFront == false) {                // sy              sx  
+            elem.getContext("2d").drawImage(eCanvas, 0, 290, 1080, 937, (590), 0, 1080, 937);
         }
     }
 
@@ -1035,7 +1050,7 @@
                 /// Modificar tamaño MarcoFrame360 **************************************************************
                 $("#scene").css("left", "539px");
                 //$("#scene").css("height", "79.8vh");
-                $("#scene").css("width", "47.3vW");
+                $("#scene").css("width", "50.3vW");
                 /// Modificar tamaño MarcoFrame360 **************************************************************
                 mostrarMarcoAFrame360();
 
