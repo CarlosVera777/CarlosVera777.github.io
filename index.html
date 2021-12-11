@@ -113,6 +113,27 @@
         </div>
     </div>
 
+
+    <div id="msgTexto"><i class="fa fa-check" style="font-size:30px; margin:5px 10px 5px;"></i> <span id="msgTextoSpan" style="margin: 5px 10px 5px;"></span> <i class="fa fa-times" style="font-size:15px; margin:5px 10px 5px; position:absolute; right:5px;"></i></div>
+
+    <style>
+        #msgTexto {
+            border-radius: 3px;
+            background-color: green;
+            height: 45px;
+            position: absolute;
+            top: 5px;
+            /*right: 10px;*/
+            left:830px;
+            z-index: 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            width: 400px;
+        }
+    </style>
+
+
     <!--<canvas id="canvas2" width="1080" height="937" style="border:1px solid black; position:absolute; top: 56px; right:75px;"></canvas>-->
 
     <script>
@@ -191,14 +212,15 @@
         a-scene {
             height: 85.2vh;
             width: 50.3vw;
-            right: -25vw !important;
+            left: 534px !important;
         }
     </style>
 
     <style>
         #visorFoto { /*canvas1*/
-            width: 1080px;
+            width: 1080px !important;
             height: 774px !important;
+            right: 0.9vw !important;
             display: block;
         }
 
@@ -208,7 +230,7 @@
     <div class="container">
         <div class="row">
             <div class="col" style="position:absolute; left:0px; height: 80vh; width: 50vw;">
-                <div id="mapid" style="height: 106.7%; width: 100%; border: 1px solid black;">
+                <div id="mapid" style="height: 107%; width: 100%; border: 1px solid black;">
                 </div>
             </div>
 
@@ -324,7 +346,7 @@
 
     /*//////////////////////////////////////////*/
     #visorFoto {
-        height: 968px;
+        height:  774px; /*968px;*/
     }
 
     /* a-canvas {
@@ -340,7 +362,7 @@
         left: -21px;
         position: absolute;
         top: 2px;
-        width: 106.2%;
+        width: 106.2% !important;
     }
 
     /*#btnAcceso360 {
@@ -843,6 +865,18 @@
             nextImage(0);
             swInicio = false;
 
+
+            //Mostrar mensaje de carga de archivo gpx ----------------------------------------------
+            setTimeout(function () {
+                $("#msgTexto").css("z-index", 1000).fadeTo(0, 0, "linear").fadeTo(1500, 1, "linear");
+                $("#msgTextoSpan").html("Mapa cargado correctamente");
+            }, 500);
+
+            setTimeout(function () {
+                $("#msgTexto").fadeTo(0, 1, "linear").fadeTo(1500, 0, "linear");
+            }, 3000);
+            $("#msgTexto").css("z-index", 0);
+
         });
     }
 
@@ -875,6 +909,17 @@
                     }
                 }
             };
+
+            // Mostrar mensaje de carga de archivo de progresivas ------------------------------------
+            setTimeout(function () {
+                $("#msgTexto").css("z-index", 1000).fadeTo(0, 0, "linear").fadeTo(1500, 1, "linear");
+                $("#msgTextoSpan").html("Archivo de Progresivas cargado.");
+            }, 500);
+
+            setTimeout(function () {
+                $("#msgTexto").fadeTo(0, 1, "linear").fadeTo(1500, 0, "linear");
+            }, 3000);
+            $("#msgTexto").css("z-index", 0);
         }
     }
 
@@ -936,7 +981,18 @@
 
                                     $("#imgImagenes").attr("src", "images/check.png");
 
-                                    alert(contImage + " Fotos cargadas correctamente!!!");
+                                    // Mostrar mensaje de carga de archivo de fotos ----------------------------------------
+                                    setTimeout(function () {
+                                        $("#msgTexto").css("z-index", 1000).fadeTo(0, 0, "linear").fadeTo(1500, 1, "linear");
+                                        $("#msgTextoSpan").html(contImage + " fotos cargadas.");
+                                    }, 500);
+
+                                    setTimeout(function () {
+                                        $("#msgTexto").fadeTo(0, 1, "linear").fadeTo(1500, 0, "linear");
+                                    }, 3000);
+                                    $("#msgTexto").css("z-index", 0);
+
+                                    // alert(contImage + " Fotos cargadas correctamente!!!");
                                 }
                             }
                         }
