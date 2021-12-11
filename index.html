@@ -219,7 +219,8 @@
     <style>
         #visorFoto { /*canvas1*/
             width: 1080px !important;
-            height: 774px !important;
+            /* height: 774px !important; */
+            height: 968px !important;
             right: 0.9vw !important;
             display: block;
         }
@@ -345,10 +346,6 @@
     }
 
     /*//////////////////////////////////////////*/
-    #visorFoto {
-        height:  774px; /*968px;*/
-    }
-
     /* a-canvas {
         height: 99.8%;
         left: -21px;
@@ -357,13 +354,13 @@
         width: 105%;
     } */
 
-    a-canvas {
+    /* a-canvas {
         height: 99.8%;
         left: -21px;
         position: absolute;
         top: 2px;
         width: 106.2% !important;
-    }
+    } */
 
     /*#btnAcceso360 {
         bottom: 13.8vh !important;
@@ -500,7 +497,7 @@
         // }
 
         elem.getContext("2d").drawImage(eCanvas, sx, sy, 1080, 774, 0, 0, 1080, 774);
-        if (directionFront == false) {                // sy              sx  
+        if (directionFront == false) {                // sy              sx
             elem.getContext("2d").drawImage(eCanvas, 0, 290, 1080, 937, (590), 0, 1080, 937);
         }
     }
@@ -889,7 +886,6 @@
             alert('select a file...');
             return;
         } else if (files.length == 1) {
-            // alert('Archivo de Progresivas cargado');
             $("#imgProgresivas").attr("src", "images/check.png");
             var file = files[0];
             var reader = new FileReader();
@@ -1087,7 +1083,7 @@
             //Mostrar Frame360
             $("#marcoAFrame").css("visibility", "visible").fadeIn(1500, "linear");
             $("#divDirection").css("visibility", "hidden");
-            //_visorFoto  
+            //_visorFoto
             $(".frame360").css("visibility", "visible");
         }
         //});
