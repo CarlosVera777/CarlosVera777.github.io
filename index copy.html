@@ -79,168 +79,126 @@
                 display: inline-block;
             }
         </style>
+    
 
-        <div id="msgTexto"><i class="fa fa-check" style="font-size:30px; margin:5px 10px 5px;"></i> <span id="msgTextoSpan" >
-        </span> <i class="fa fa-times" style="font-size:15px; margin:5px 10px 5px; position:absolute; right:5px;"></i>
+    <!--VISOR 360º-->
+    <div id="btnAcceso360" class="view360 showVisor360" style="width:100px; height:60px; align-items:center; text-align:center; z-index:10000; position:absolute; bottom:6.5vh; right:1.1vw; background-color:white; color:white; padding:5px 10px; font-size: 1.5rem; border: 1px solid gray; border-radius: 5px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px white; user-select:none; visibility:hidden;">
+        <img src="images/360view.gif" class="view360" width="80" alt="Alternate Text" style="user-select:none;"/>
+        <!--<span style="color:darkblue; font-size:1em;"><i class="fas fa-sign-out-alt fa-2x"></i></span>-->
+    </div>
+
+    <canvas id="visorFoto" width="1080" height="774" style="border:1px solid black; position:absolute; top: 56px; right:0px; background-color:white;"></canvas>
+
+    <style>
+        /*#btnAcceso360:hover {
+            background-color: gray !important;
+        }*/
+
+        .rotulo {
+            background-image: linear-gradient(to bottom, #eab833 0%, #ffd054 51%, #eab833 100%);
+        }
+
+        .hideFront {
+            animation-duration: 0.5s;
+            animation-name: fronthide;
+            animation-timing-function: ease-in;
+        }
+
+        .showFront {
+            animation-duration: 0.5s;
+            animation-name: frontshow;
+            animation-timing-function: ease-in;
+        }
+
+        .hideBack {
+            animation-duration: 0.5s;
+            animation-name: backhide;
+            animation-timing-function: ease-in;
+        }
+
+        .showBack {
+            animation-duration: 0.5s;
+            animation-name: backshow;
+            animation-timing-function: ease-in;
+        }
+
+        @keyframes frontshow {
+            from {
+                top: -110px;
+            }
+
+            to {
+                top: 0px;
+            }
+        }
+
+        @keyframes fronthide {
+            from {
+                top: 0px;
+            }
+
+            to {
+                top: -110px;
+            }
+        }
+
+        @keyframes backshow {
+            from {
+                top: 0px;
+            }
+
+            to {
+                top: -110px;
+            }
+        }
+
+        @keyframes backhide {
+            from {
+                top: -110px;
+            }
+
+            to {
+                top: 0px;
+            }
+
+            100% {
+            }
+        }
+    </style>
+
+
+    <div id="divDirection" class="Front" style="overflow:hidden; height:100px; width:27.5vw; text-align:center; align-items:center; padding-left:10px; border: 1px solid black;  border-radius: 5px; position:absolute; top: 66px; right:12vw; z-index:1000; background-color:yellow; box-shadow: 10px 10px 5px 0px rgba(87, 81, 81, 0.4); visibility:hidden;" onclick="changeDirection();">
+        <div class="rotulo Front" style="user-select:none; text-align:center; width:26vw; display:block; background-color:yellow; z-index:-1; padding:15px; position:relative; top:0px; overflow:hidden; border:1px solid blue; ">
+            <h1 id="lblDirectionFront" style="font-size:2rem; display:inline;">VISTA FRONTAL</h1>
+            <img src="images/DirectionFront.png" width="100" alt="Direccion Frontal" style="margin-left:30px; background-color:white; border-radius: 5px;" />
         </div>
+        <div class="rotulo Back" style="user-select:none; text-align:center; width:26vw; display:block; background-color:yellow; z-index:1; padding:15px; position:relative; top:0px; overflow:hidden; border:1px solid blue;">
+            <h1 id="lblDirectionBack" style="font-size:2rem; display:inline;">VISTA POSTERIOR</h1>
+            <img src="images/DirectionBack.png" width="100" alt="Direccion Posterior" style="margin-left:30px; background-color:white; border-radius: 5px;" />
+        </div>
+    </div>
 
-        <style>
+
+    <div id="msgTexto"><i class="fa fa-check" style="font-size:30px; margin:5px 10px 5px;"></i> <span id="msgTextoSpan" >
+        </span> <i class="fa fa-times" style="font-size:15px; margin:5px 10px 5px; position:absolute; right:5px;"></i>
+    </div>
+
+    <style>
         #msgTexto {
             border-radius: 3px;
             background-color: green;
             height: 45px;
             position: absolute;
             top: 5px;
-            right: 10px;
-            /* left:830px; */
+            /*right: 10px;*/
+            left:830px;
             z-index: 0;
             color: white;
             display: flex;
             align-items: center;
             width: 400px;
         }
-        </style>
-    
-    <div class="container-fluid">
-        <div class="row" >
-            <div class="col-xl-6 col-md-6" style="position:absolute; left:-15px; height: 81.5vh; width:100%;">
-                <div id="mapid" style="height: 107%; width: 103.5%; border: 1px solid black;">
-                </div>
-            </div>
-
-            <div class="col-xl-6 col-md-6" style="position:absolute; right:15px; width:100%; height: 81.5vh;">
-                <canvas id="visorFoto" width="1080" height="773" style="position:absolute; border:1px solid black; background-color:white;"></canvas>
-                <div id="marcoAFrame"  width="1080" height="773" style="visibility:hidden; border:1px solid blue;">
-
-                    <a-scene id="scene" cursor="rayOrigin: mouse" embedded>
-                        <a-camera id="camera"
-                                  control-component-orbit
-                                  mouse-cursor=""
-                                  position="0 120 90"
-                                  wasd-controls=""
-                                  rotation="0 0 0"
-                                  look-controls>
-                            <a-entity cursor="fuse: false; fuseTimeout: 500"
-                                      position="0 0 -1"
-                                      geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
-                                      material="color: black; shader: flat">
-                            </a-entity>
-                        </a-camera>
-    
-                        <a-assets>
-                            <svg id="sky0" src=""></svg>
-                        </a-assets>
-                        <a-sky id="target" src="" rotation="0 -90 0"></a-sky>
-                    </a-scene>
-    
-                </div>
-                <!--    Eje X: Horizontal Izq(-)    Der(+)
-                        Eje Z: Horizontal Atras(-)  Adentante(+)
-                        Eje Y: Vertical   Arriba(+) Abajo(-)        -->
-                <!--VISOR 360º-->
-                <div id="btnAcceso360" class="view360 showVisor360" style="width:100px; height:60px; align-items:center; text-align:center; z-index:10000; position:absolute; bottom:-5.5vh; right:-0.8vw; background-color:white; color:white; padding:5px 10px; font-size: 1.5rem; border: 1px solid gray; border-radius: 5px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px white; user-select:none; visibility:hidden;">
-                    <img src="images/360view.gif" class="view360" width="80" alt="Alternate Text" style="user-select:none;"/>
-                    <!--<span style="color:darkblue; font-size:1em;"><i class="fas fa-sign-out-alt fa-2x"></i></span>-->
-                </div>
-
-                <style>
-                    /*#btnAcceso360:hover {
-                        background-color: gray !important;
-                    }*/
-
-                    .rotulo {
-                        background-image: linear-gradient(to bottom, #eab833 0%, #ffd054 51%, #eab833 100%);
-                    }
-
-                    .hideFront {
-                        animation-duration: 0.5s;
-                        animation-name: fronthide;
-                        animation-timing-function: ease-in;
-                    }
-
-                    .showFront {
-                        animation-duration: 0.5s;
-                        animation-name: frontshow;
-                        animation-timing-function: ease-in;
-                    }
-
-                    .hideBack {
-                        animation-duration: 0.5s;
-                        animation-name: backhide;
-                        animation-timing-function: ease-in;
-                    }
-
-                    .showBack {
-                        animation-duration: 0.5s;
-                        animation-name: backshow;
-                        animation-timing-function: ease-in;
-                    }
-
-                    @keyframes frontshow {
-                        from {
-                            top: -110px;
-                        }
-
-                        to {
-                            top: 0px;
-                        }
-                    }
-
-                    @keyframes fronthide {
-                        from {
-                            top: 0px;
-                        }
-
-                        to {
-                            top: -110px;
-                        }
-                    }
-
-                    @keyframes backshow {
-                        from {
-                            top: 0px;
-                        }
-
-                        to {
-                            top: -110px;
-                        }
-                    }
-
-                    @keyframes backhide {
-                        from {
-                            top: -110px;
-                        }
-
-                        to {
-                            top: 0px;
-                        }
-
-                        100% {
-                        }
-                    }
-                </style>
-
-
-                <div id="divDirection" class="Front" style="overflow:hidden; height:100px; width:27.5vw; text-align:center; align-items:center; padding-left:10px; border: 1px solid black;  border-radius: 5px; position:absolute; top: 66px; right:12vw; z-index:1000; background-color:yellow; box-shadow: 10px 10px 5px 0px rgba(87, 81, 81, 0.4); visibility:hidden;" onclick="changeDirection();">
-                    <div class="rotulo Front" style="user-select:none; text-align:center; width:26vw; display:block; background-color:yellow; z-index:-1; padding:15px; position:relative; top:0px; overflow:hidden; border:1px solid blue; ">
-                        <h3 id="lblDirectionFront" style="display:inline;">VISTA FRONTAL</h3>
-                        <img src="images/DirectionFront.png" width="100" alt="Direccion Frontal" style="margin-left:30px; background-color:white; border-radius: 5px;" />
-                    </div>
-                    <div class="rotulo Back" style="user-select:none; text-align:center; width:26vw; display:block; background-color:yellow; z-index:1; padding:15px; position:relative; top:0px; overflow:hidden; border:1px solid blue;">
-                        <h3 id="lblDirectionBack" style="display:inline;">VISTA POSTERIOR</h3>
-                        <img src="images/DirectionBack.png" width="100" alt="Direccion Posterior" style="margin-left:30px; background-color:white; border-radius: 5px;" />
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-    </div>
-
-    
-
-
-
-
+    </style>
 
 
     <!--<canvas id="canvas2" width="1080" height="937" style="border:1px solid black; position:absolute; top: 56px; right:75px;"></canvas>-->
@@ -270,20 +228,17 @@
         a-scene {
             /* height: 85.2vh; */
             /* width: 50.3vw; */
-            width: 104% !important;
-            height: 87.2vh !important;
-            position: relative !important;
-            left:0px !important;
-            /* left: 524px !important; */
+            width: 100%;
+            left: 524px !important;
         }
     </style>
 
     <style>
-        #visorFoto {
+        #visorFoto { /*canvas1*/
             width: 100% !important;
-            height: 87.2vh !important;
+            /* height: 85.2vh; */
             /* right: 0px !important; */
-            /* display: block; */
+            display: block;
         }
         /* #visorFoto { 
             width: 1080px !important;
@@ -295,7 +250,42 @@
     </style>
 
 
-    
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-6" style="position:absolute; left:-15px; height: 80vh; width:100%;">
+                <div id="mapid" style="height: 107%; width: 100%; border: 1px solid black;">
+                </div>
+            </div>
+
+            <div id="marcoAFrame" class="col-xl-6" style="visibility:hidden; border:1px solid blue;">
+
+                <a-scene id="scene" cursor="rayOrigin: mouse" embedded>
+                    <a-camera id="camera"
+                              control-component-orbit
+                              mouse-cursor=""
+                              position="0 120 90"
+                              wasd-controls=""
+                              rotation="0 0 0"
+                              look-controls>
+                        <a-entity cursor="fuse: false; fuseTimeout: 500"
+                                  position="0 0 -1"
+                                  geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                                  material="color: black; shader: flat">
+                        </a-entity>
+                    </a-camera>
+
+                    <a-assets>
+                        <svg id="sky0" src=""></svg>
+                    </a-assets>
+                    <a-sky id="target" src="" rotation="0 -90 0"></a-sky>
+                </a-scene>
+
+            </div>
+            <!--    Eje X: Horizontal Izq(-)    Der(+)
+                    Eje Z: Horizontal Atras(-)  Adentante(+)
+                    Eje Y: Vertical   Arriba(+) Abajo(-)        -->
+        </div>
+    </div>
 
     <style>
         input {
@@ -504,43 +494,33 @@
         if (directionFront == true) {
             sx = (widthFotosLoaded * 0.8) * (32.2265625 / 100);     //sx = 990;
             sy = (heightFotosLoaded * 0.8) * (15.91435185 / 100);   //sy = 275;
-            // sx = 870;
-            // sy = 435;
-            sx = 1000;
-            sy = 310;
+            sx = 870;
+            sy = 435;
         } else {
             //jesus
             sx = (widthFotosLoaded * 0.8) * (83.17057292 / 100); //sx = 2555;
             sy = (heightFotosLoaded * 0.8) * (15.91435185 / 100); //sy = 275;
-            // sx = 2480;
-            // sy = 290;
-            sx = 2330;
+            sx = 2480;
             sy = 290;
         }
 
         //Cambiar dimensiones de foto
         var eCanvas = document.createElement("canvas");
-        var newWidth = widthFotosLoaded * 0.714;
-        var newHeight = heightFotosLoaded * 0.714;
+        var newWidth = widthFotosLoaded * 0.8;
+        var newHeight = heightFotosLoaded * 0.8;
         eCanvas.width = newWidth;
         eCanvas.height = newHeight;
         var ctx = eCanvas.getContext("2d");
         ctx.drawImage(img, 0, 0, newWidth, newHeight);
-
-        //drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-
-        //-----------------
-
-        // /*var canvas1 = */                            // 1080, 937       1080, 937  
-        // elem.getContext("2d").drawImage(eCanvas, sx, sy, 850, 950, 0, 0, 850, 950);
-        //-----------------
+        /*var canvas1 = */
+        elem.getContext("2d").drawImage(eCanvas, sx, sy, 1080, 937, 0, 0, 1080, 937);
         // if (directionFront == false) {
         //     elem.getContext("2d").drawImage(eCanvas, 0, sy, 1080, 937, ((widthFotosLoaded * 0.8) * (16.82942708 / 100)), 0, 1080, 937);
         // }
-                                                      // 1080, 774       1080, 774
-        elem.getContext("2d").drawImage(eCanvas, sx, sy, 750, 774, 0, 0, 1080, 774);
-        if (directionFront == false) {                // sy  1080, 937   sx      1080, 937
-            elem.getContext("2d").drawImage(eCanvas, 0, 290, 750, 937, (590), 0, 1080, 937);
+
+        elem.getContext("2d").drawImage(eCanvas, sx, sy, 1080, 774, 0, 0, 1080, 774);
+        if (directionFront == false) {                // sy              sx
+            elem.getContext("2d").drawImage(eCanvas, 0, 290, 1080, 937, (590), 0, 1080, 937);
         }
     }
 
@@ -1143,11 +1123,7 @@
 
                 /// Modificar tamaño MarcoFrame360 **************************************************************
                 // $("#scene").css("left", "539px"); ok
-                //-------------------------------------
-                // // jesus
-                // $("#scene").css("left", "524px");
-                $("#scene").css("left", "0px");
-                //-------------------------------------
+                $("#scene").css("left", "524px");
                 //$("#scene").css("height", "79.8vh");
                 // $("#scene").css("width", "50.3vW");
                 $("#scene").css("width", "100%");
