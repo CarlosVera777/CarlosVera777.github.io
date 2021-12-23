@@ -192,7 +192,7 @@
             top: 5px;
             /*right: 10px;*/
             left:830px;
-            z-index: 0;
+            z-index: -1 !important;
             color: white;
             display: flex;
             align-items: center;
@@ -308,9 +308,9 @@
         }
     </style>
 
-    <footer class="toolbar toolbar-footer" style="position:absolute; bottom:0px; background-color:lightgray; width:99.4vw; ">
+    <footer class="toolbar toolbar-footer" style="z-index:20000; position:absolute; bottom:0px; background-color:lightgray; width:99.4vw; ">
         <div id="navigatorControls" class="toolbar-actions row">
-            <div class="col-sm-6 ml-4 mt-2 mb-2">
+            <div class="col-xl-6 col-md-6 ml-4 mt-2 mb-2">
                 <span id="datos"> <!--Progresiva=0--></span>
             </div>
 
@@ -327,25 +327,28 @@
                     }*/
             </style>
 
-            <!--<div class="col-sm-3 mt-2 mb-2 ml-2">-->
-            <div class="col-sm">
-                <button id="btnFirstImage" class="btn btn-sm btn-info align-middle navegation" onclick="nextImage(0);"><i class="fas fa-step-backward"></i></button>
-                <button id="btnPreviewImage" class="btn btn-sm btn-info align-middle navegation" onclick='previewImage();'><i class="fa fa-arrow-alt-circle-left"></i></button>
-                <input class="form-control-sm progresiva align-middle navegation" style="width: 80px;" type="text" id="txtProgresiva" name="txtProgresiva" placeholder="999+999" value="" pattern="\d{3}\+\d{3}" maxlength="7" alt="Ingrese progresiva y pulse Enter." required /> <!--title="La progresiva debe ser en el siguiente formato 999+999"-->
-                <button id="btnNextImage" class="btn btn-sm btn-info align-middle navegation" onclick='nextImage();'><i class="fa fa-arrow-circle-right"></i></button>
-                <button id="btnLastImage" class="btn btn-sm btn-info align-middle navegation" onclick="nextImage(contImage-1);"><i class="fas fa-step-forward"></i></button>
+            <div class="col-xl-6 col-md-6 ml-4 mt-2 mb-2">
+                <!--<div class="col-sm-3 mt-2 mb-2 ml-2">-->
+                <div class="col-xl-6">
+                    <button id="btnFirstImage" class="btn btn-sm btn-info align-middle navegation" onclick="nextImage(0);"><i class="fas fa-step-backward"></i></button>
+                    <button id="btnPreviewImage" class="btn btn-sm btn-info align-middle navegation" onclick='previewImage();'><i class="fa fa-arrow-alt-circle-left"></i></button>
+                    <input class="form-control-sm progresiva align-middle navegation" style="width: 80px;" type="text" id="txtProgresiva" name="txtProgresiva" placeholder="999+999" value="" pattern="\d{3}\+\d{3}" maxlength="7" alt="Ingrese progresiva y pulse Enter." required /> <!--title="La progresiva debe ser en el siguiente formato 999+999"-->
+                    <button id="btnNextImage" class="btn btn-sm btn-info align-middle navegation" onclick='nextImage();'><i class="fa fa-arrow-circle-right"></i></button>
+                    <button id="btnLastImage" class="btn btn-sm btn-info align-middle navegation" onclick="nextImage(contImage-1);"><i class="fas fa-step-forward"></i></button>
+                </div>
+    
+                <!--<div class="col-sm-3 mt-2 mb-2">-->
+                    <div class="col-xl-6">
+                        <form id="frmRecorreTramo" onsubmit="recorrerTramo(); return false;">
+                            <button type="submit" id="btnBack" class="btn btn-sm btn-primary align-middle direction" onclick="swDirectionMoveTramo = false; swRecorridoTramo = true;"><i class="fas fa-backward"></i></button>
+                            <input class="form-control-sm progresiva align-middle" style="width: 80px;" type="text" id="txtProgIni" value="" name="txtProgIni" placeholder="" pattern="\d{3}\+\d{3}" title="La progresiva debe ser en el siguiente formato 999+999" maxlength="7" required />
+                            <button type="submit" id="btnPauseStop" class="btn btn-sm btn-primary align-middle pause" style="display:none;"><i class="fas fa-pause"></i></button>
+                            <input class="form-control-sm progresiva align-middle" style="width: 80px;" type="text" id="txtProgFin" value="" name="txtProgFin" placeholder="" pattern="\d{3}\+\d{3}" title="La progresiva debe ser en el siguiente formato 999+999" maxlength="7" required />
+                            <button type="submit" id="btnFront" class="btn btn-sm btn-primary align-middle direction" onclick="swDirectionMoveTramo = true; swRecorridoTramo = true;"><i class="fas fa-forward"></i></button>
+                        </form>
+                    </div>
             </div>
 
-            <!--<div class="col-sm-3 mt-2 mb-2">-->
-                <div class="col-sm">
-                    <form id="frmRecorreTramo" onsubmit="recorrerTramo(); return false;">
-                        <button type="submit" id="btnBack" class="btn btn-sm btn-primary align-middle direction" onclick="swDirectionMoveTramo = false; swRecorridoTramo = true;"><i class="fas fa-backward"></i></button>
-                        <input class="form-control-sm progresiva align-middle" style="width: 80px;" type="text" id="txtProgIni" value="" name="txtProgIni" placeholder="" pattern="\d{3}\+\d{3}" title="La progresiva debe ser en el siguiente formato 999+999" maxlength="7" required />
-                        <button type="submit" id="btnPauseStop" class="btn btn-sm btn-primary align-middle pause" style="display:none;"><i class="fas fa-pause"></i></button>
-                        <input class="form-control-sm progresiva align-middle" style="width: 80px;" type="text" id="txtProgFin" value="" name="txtProgFin" placeholder="" pattern="\d{3}\+\d{3}" title="La progresiva debe ser en el siguiente formato 999+999" maxlength="7" required />
-                        <button type="submit" id="btnFront" class="btn btn-sm btn-primary align-middle direction" onclick="swDirectionMoveTramo = true; swRecorridoTramo = true;"><i class="fas fa-forward"></i></button>
-                    </form>
-                </div>
          </div>
 </footer>
 

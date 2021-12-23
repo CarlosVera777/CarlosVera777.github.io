@@ -14,6 +14,8 @@
 
     <script src="./js/super-three-min.0.119.0.js"></script>
     <script src="./js/aframe.min-1.0.4.js"></script>
+
+    <script src="./js/sweetalert2@11.js"></script>
 </head>
 <body>
 
@@ -38,20 +40,17 @@
             <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
                 <a class="navbar-brand" href="#"><i class="fab fa-angular"></i> Itinerario Fílmico</a>
                 <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                    <li class="nav-item files-load active">
-                        <a class="nav-link" href="#" id="btn_img" onclick="$('#files-input').click();">Imagenenes <span class="sr-only">(current)</span></a>
-                        <img id="imgImagenes" src="images/uncheck.png" width=24 style="margin-left:-10px;" />
+                    <li class="nav-item files-load active " onclick="$('#files-input').click();">
+                        <a class="nav-link" href="#" id="btn_img">Imagenenes <span class="sr-only">(current)</span></a>
+                        <img id="imgImagenes" src="images/uncheck.png" width=24 style="margin-left:-3px;" />
                     </li>
-                    <li class="nav-item files-load active">
-                        <a class="nav-link" href="#" onclick="$('#gpx').click();" style="margin-left:10px;">GPX <span class="sr-only">(current)</span></a>
-                        <img id="imgGPX" src="images/uncheck.png" width=24 style="margin-left:-10px;" />
+                    <li class="nav-item files-load active " onclick="$('#gpx').click();">
+                        <a class="nav-link" href="#" style="margin-left:10px;">GPX <span class="sr-only">(current)</span></a>
+                        <img id="imgGPX" src="images/uncheck.png" width=24 style="margin-left:-3px;" />
                     </li>
-                    <li class="nav-item files-load active">
-                        <a class="nav-link" href="#" id="btn_scv" onclick="$('#file-input').click();" style="margin-left:10px;">Progresiva <span class="sr-only">(current)</span></a>
-                        <img id="imgProgresivas" src="images/uncheck.png" width=24 style="margin-left:-10px;" />
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">|<span class="sr-only">(current)</span></a>
+                    <li class="nav-item files-load active" onclick="$('#file-input').click();">
+                        <a class="nav-link" href="#" id="btn_scv" style="margin-left:10px;">Progresiva <span class="sr-only">(current)</span></a>
+                        <img id="imgProgresivas" src="images/uncheck.png" width=24 style="margin-left:-3px;" />
                     </li>
                     <li class="nav-item frame360 active" style="visibility:hidden;">
                         <a class="nav-link" href="#" id="btn_grid" onclick="crearGrilla();">Grilla <span class="sr-only">(current)</span></a>
@@ -80,7 +79,7 @@
             }
         </style>
 
-        <div id="msgTexto"><i class="fa fa-check" style="font-size:30px; margin:5px 10px 5px;"></i> <span id="msgTextoSpan" >
+        <!-- <div id="msgTexto"><i class="fa fa-check" style="font-size:30px; margin:5px 10px 5px;"></i> <span id="msgTextoSpan" >
         </span> <i class="fa fa-times" style="font-size:15px; margin:5px 10px 5px; position:absolute; right:5px;"></i>
         </div>
 
@@ -93,24 +92,25 @@
             top: 5px;
             right: 10px;
             /* left:830px; */
-            z-index: 0;
+            /* z-index: -1; */
+            visibility:hidden;
             color: white;
             display: flex;
             align-items: center;
             width: 400px;
         }
-        </style>
+        </style> -->
     
     <div class="container-fluid">
         <div class="row" >
-            <div class="col-xl-6 col-md-6" style="position:absolute; left:-15px; height: 81.5vh; width:100%;">
-                <div id="mapid" style="height: 107%; width: 103.5%; border: 1px solid black;">
+            <div class="col-xl-6 col-md-6 col-sm-12" style="position:absolute; left:-15px; height: 81.5vh; width:100%;">
+                <div id="mapid" style="height: 104%; width: 103.5%; z-index: -1; border: 1px solid black;">
                 </div>
             </div>
 
-            <div class="col-xl-6 col-md-6" style="position:absolute; right:15px; width:100%; height: 81.5vh;">
+            <div class="col-xl-6 col-md-6 col-sm-12" style="position:absolute; right:15px; width:100%; height: 81.5vh;">
                 <canvas id="visorFoto" width="1080" height="773" style="position:absolute; border:1px solid black; background-color:white;"></canvas>
-                <div id="marcoAFrame"  width="1080" height="773" style="visibility:hidden; border:1px solid blue;">
+                <div id="marcoAFrame"  width="1080" style="height: 104%; visibility:hidden; border:1px solid blue;">
 
                     <a-scene id="scene" cursor="rayOrigin: mouse" embedded>
                         <a-camera id="camera"
@@ -138,7 +138,7 @@
                         Eje Z: Horizontal Atras(-)  Adentante(+)
                         Eje Y: Vertical   Arriba(+) Abajo(-)        -->
                 <!--VISOR 360º-->
-                <div id="btnAcceso360" class="view360 showVisor360" style="width:100px; height:60px; align-items:center; text-align:center; z-index:10000; position:absolute; bottom:-5.5vh; right:-0.8vw; background-color:white; color:white; padding:5px 10px; font-size: 1.5rem; border: 1px solid gray; border-radius: 5px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px white; user-select:none; visibility:hidden;">
+                <div id="btnAcceso360" class="view360 showVisor360" style="width:100px; height:60px; align-items:center; text-align:center; z-index:10000; position:absolute; bottom:-2.5vh; right:-0.8vw; background-color:white; color:white; padding:5px 10px; font-size: 1.5rem; border: 1px solid gray; border-radius: 5px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px white; user-select:none; visibility:hidden;">
                     <img src="images/360view.gif" class="view360" width="80" alt="Alternate Text" style="user-select:none;"/>
                     <!--<span style="color:darkblue; font-size:1em;"><i class="fas fa-sign-out-alt fa-2x"></i></span>-->
                 </div>
@@ -221,14 +221,14 @@
                 </style>
 
 
-                <div id="divDirection" class="Front" style="overflow:hidden; height:100px; width:27.5vw; text-align:center; align-items:center; padding-left:10px; border: 1px solid black;  border-radius: 5px; position:absolute; top: 66px; right:12vw; z-index:1000; background-color:yellow; box-shadow: 10px 10px 5px 0px rgba(87, 81, 81, 0.4); visibility:hidden;" onclick="changeDirection();">
-                    <div class="rotulo Front" style="user-select:none; text-align:center; width:26vw; display:block; background-color:yellow; z-index:-1; padding:15px; position:relative; top:0px; overflow:hidden; border:1px solid blue; ">
-                        <h1 id="lblDirectionFront" style="font-size: 2rem; display:inline;">VISTA FRONTAL</h1>
-                        <img src="images/DirectionFront.png" width="100" alt="Direccion Frontal" style="margin-left:30px; background-color:white; border-radius: 5px;" />
+                <div id="divDirection" class="Front" style="overflow:hidden; height:11vh; width:325px; text-align:center; align-items:center; padding-left:10px; border: 1px solid black;  border-radius: 5px; position:absolute; top: 66px; right:12vw; z-index:1000; background-color:yellow; box-shadow: 10px 10px 5px 0px rgba(87, 81, 81, 0.4); visibility:hidden;" onclick="changeDirection();">
+                    <div class="rotulo Front" style="user-select:none; text-align:center; width:300px; height: 11.5vh; display:block; background-color:yellow; z-index:-1; padding:15px; position:relative; top:0px; overflow:hidden; border:1px solid blue; ">
+                        <h1 id="lblDirectionFront" style="font-size: 1.5rem; display:inline;">VISTA FRONTAL</h1>
+                        <img src="images/DirectionFront.png" width="75" alt="Direccion Frontal" style="margin-left:30px; background-color:white; border-radius: 5px;" />
                     </div>
-                    <div class="rotulo Back" style="user-select:none; text-align:center; width:26vw; display:block; background-color:yellow; z-index:1; padding:15px; position:relative; top:0px; overflow:hidden; border:1px solid blue;">
-                        <h1 id="lblDirectionBack" style="font-size: 2rem;display:inline;">VISTA POSTERIOR</h1>
-                        <img src="images/DirectionBack.png" width="100" alt="Direccion Posterior" style="margin-left:30px; background-color:white; border-radius: 5px;" />
+                    <div class="rotulo Back" style="user-select:none; text-align:center; width:300px; height: 11.5vh; display:block; background-color:yellow; z-index:1; padding:15px; position:relative; top:0px; overflow:hidden; border:1px solid blue;">
+                        <h1 id="lblDirectionBack" style="font-size: 1.5rem;display:inline;">VISTA POSTERIOR</h1>
+                        <img src="images/DirectionBack.png" width="75" alt="Direccion Posterior" style="margin-left:30px; background-color:white; border-radius: 5px;" />
                     </div>
                 </div>
                 
@@ -270,8 +270,10 @@
         a-scene {
             /* height: 85.2vh; */
             /* width: 50.3vw; */
-            width: 103% !important;
-            height: 87.2vh !important;
+            width: 103.6% !important;
+            /*height: 87.2vh !important; */
+            /* width: 49.9vw !important; */
+            height: 84.6vh !important;
             position: relative !important;
             left:0px !important;
             /* left: 524px !important; */
@@ -281,7 +283,8 @@
     <style>
         #visorFoto {
             width: 100% !important;
-            height: 87.2vh !important;
+            /* height: 87.2vh !important; */
+            height: 84.7vh !important;
             /* right: 0px !important; */
             /* display: block; */
         }
@@ -291,6 +294,11 @@
             right: 0.9vw !important;
             display: block;
         } */
+
+        a-canvas {
+            height: 97%;
+            width: 103.7%;
+        }
 
     </style>
 
@@ -319,35 +327,22 @@
     </style>
 
     <footer class="toolbar toolbar-footer" style="position:absolute; bottom:0px; background-color:lightgray; width:99vw; ">
-        <div id="navigatorControls" class="toolbar-actions row">
-            <div class="col-sm-6 ml-4 mt-2 mb-2">
+        <div id="navigatorControls" class="toolbar-actions row col-xl-12">
+            <div class="col-xl-6 ml-4 mt-2 mb-2">
                 <span id="datos"> <!--Progresiva=0--></span>
             </div>
 
-            <style>
-                input {
-                    width: 120px;
-                    font-size: 2em;
-                    color: blue;
-                }
-                /*input[value] {
-                    }
-                    input[placeholder] {
-                        font-weight:normal;
-                    }*/
-            </style>
-
-            <!--<div class="col-sm-3 mt-2 mb-2 ml-2">-->
-            <div class="col-sm">
-                <button id="btnFirstImage" class="btn btn-sm btn-info align-middle navegation" onclick="nextImage(0);"><i class="fas fa-step-backward"></i></button>
-                <button id="btnPreviewImage" class="btn btn-sm btn-info align-middle navegation" onclick='previewImage();'><i class="fa fa-arrow-alt-circle-left"></i></button>
-                <input class="form-control-sm progresiva align-middle navegation" style="width: 80px;" type="text" id="txtProgresiva" name="txtProgresiva" placeholder="999+999" value="" pattern="\d{3}\+\d{3}" maxlength="7" alt="Ingrese progresiva y pulse Enter." required /> <!--title="La progresiva debe ser en el siguiente formato 999+999"-->
-                <button id="btnNextImage" class="btn btn-sm btn-info align-middle navegation" onclick='nextImage();'><i class="fa fa-arrow-circle-right"></i></button>
-                <button id="btnLastImage" class="btn btn-sm btn-info align-middle navegation" onclick="nextImage(contImage-1);"><i class="fas fa-step-forward"></i></button>
-            </div>
-
-            <!--<div class="col-sm-3 mt-2 mb-2">-->
-                <div class="col-sm">
+                <!--<div class="col-sm-3 mt-2 mb-2 ml-2">-->
+                <div class="col-xl">
+                    <button id="btnFirstImage" class="btn btn-sm btn-info align-middle navegation" onclick="nextImage(0);"><i class="fas fa-step-backward"></i></button>
+                    <button id="btnPreviewImage" class="btn btn-sm btn-info align-middle navegation" onclick='previewImage();'><i class="fa fa-arrow-alt-circle-left"></i></button>
+                    <input class="form-control-sm progresiva align-middle navegation" style="width: 80px;" type="text" id="txtProgresiva" name="txtProgresiva" placeholder="999+999" value="" pattern="\d{3}\+\d{3}" maxlength="7" alt="Ingrese progresiva y pulse Enter." required /> <!--title="La progresiva debe ser en el siguiente formato 999+999"-->
+                    <button id="btnNextImage" class="btn btn-sm btn-info align-middle navegation" onclick='nextImage();'><i class="fa fa-arrow-circle-right"></i></button>
+                    <button id="btnLastImage" class="btn btn-sm btn-info align-middle navegation" onclick="nextImage(contImage-1);"><i class="fas fa-step-forward"></i></button>
+                </div>
+    
+                <!--<div class="col-sm-3 mt-2 mb-2">-->
+                <div class="col-xl">
                     <form id="frmRecorreTramo" onsubmit="recorrerTramo(); return false;">
                         <button type="submit" id="btnBack" class="btn btn-sm btn-primary align-middle direction" onclick="swDirectionMoveTramo = false; swRecorridoTramo = true;"><i class="fas fa-backward"></i></button>
                         <input class="form-control-sm progresiva align-middle" style="width: 80px;" type="text" id="txtProgIni" value="" name="txtProgIni" placeholder="" pattern="\d{3}\+\d{3}" title="La progresiva debe ser en el siguiente formato 999+999" maxlength="7" required />
@@ -356,7 +351,31 @@
                         <button type="submit" id="btnFront" class="btn btn-sm btn-primary align-middle direction" onclick="swDirectionMoveTramo = true; swRecorridoTramo = true;"><i class="fas fa-forward"></i></button>
                     </form>
                 </div>
+
          </div>
+        <style>
+            input {
+                width: 120px;
+                font-size: 2em;
+                color: blue;
+            }
+            /*input[value] {
+                }
+                input[placeholder] {
+                    font-weight:normal;
+                }*/
+            .leaflet-control-attribution {
+                display:none !important;
+            }
+            .leaflet-control{
+                display:none !important;
+            }
+
+            .a-enter-vr {
+                display:none;
+            }
+
+        </style>
 </footer>
 
     <script src="./js/bouncemarker-1.2.0.js"></script>
@@ -470,6 +489,7 @@
     accederOpcionesInterfaz(false);
 
     //------------------------------------------------------------------------
+    
     function changeDirection() {
 
         if ($("#divDirection").hasClass("Front") == true) {
@@ -906,15 +926,41 @@
 
 
             //Mostrar mensaje de carga de archivo gpx ----------------------------------------------
-            setTimeout(function () {
-                $("#msgTexto").css("z-index", 1000).fadeTo(0, 0, "linear").fadeTo(1500, 1, "linear");
-                $("#msgTextoSpan").html("Mapa cargado correctamente");
-            }, 500);
+            // Swal.fire({
+            //     position: 'top-end',
+            //     icon: 'success',
+            //     title: 'Mapa cargado correctamente',
+            //     showConfirmButton: false,
+            //     timer: 5000
+            // });
 
-            setTimeout(function () {
-                $("#msgTexto").fadeTo(0, 1, "linear").fadeTo(1500, 0, "linear");
-            }, 3000);
-            $("#msgTexto").css("z-index", 0);
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+
+            Toast.fire({
+                icon: 'success',
+                title: 'Mapa cargado correctamente'
+            });
+
+            // setTimeout(function () {
+            //     $("#msgTextoSpan").fadeIn(1000, "linear");
+            //     $("#msgTextoSpan").html("Mapa cargado correctamente");
+            //     $("#msgTexto").css("visibility", "visible").fadeIn(500, "linear");
+            // }, 500);
+
+            // setTimeout(function () {
+            //     $("#msgTexto").css("visibility", "hidden").fadeOut(1500, "linear");
+            // }, 3000);
+            // $("#msgTexto").css("visibility", "hidden");
 
         });
     }
@@ -949,15 +995,42 @@
             };
 
             // Mostrar mensaje de carga de archivo de progresivas ------------------------------------
-            setTimeout(function () {
-                $("#msgTexto").css("z-index", 1000).fadeTo(0, 0, "linear").fadeTo(1500, 1, "linear");
-                $("#msgTextoSpan").html("Archivo de Progresivas cargado.");
-            }, 500);
+            // setTimeout(function () {
+            //     $("#msgTextoSpan").fadeIn(1000, "linear");
+            //     $("#msgTextoSpan").html("Progresivas cargado correctamente.");
+            //     $("#msgTexto").css("visibility", "visible").fadeIn(500, "linear");
+            // }, 500);
 
-            setTimeout(function () {
-                $("#msgTexto").fadeTo(0, 1, "linear").fadeTo(1500, 0, "linear");
-            }, 3000);
-            $("#msgTexto").css("z-index", 0);
+            // setTimeout(function () {
+            //     $("#msgTexto").css("visibility", "hidden").fadeOut(1500, "linear");
+            // }, 3000);
+            // $("#msgTexto").css("visibility", "hidden");
+
+            // Swal.fire({
+            //     position: 'top-end',
+            //     icon: 'success',
+            //     title: 'Progresivas cargado correctamente',
+            //     showConfirmButton: false,
+            //     timer: 1500
+            // });
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+
+            Toast.fire({
+                icon: 'success',
+                title: 'Progresivas cargadas correctamente'
+            });
+            
         }
     }
 
@@ -1020,17 +1093,42 @@
                                     $("#imgImagenes").attr("src", "images/check.png");
 
                                     // Mostrar mensaje de carga de archivo de fotos ----------------------------------------
-                                    setTimeout(function () {
-                                        $("#msgTexto").css("z-index", 1000).fadeTo(0, 0, "linear").fadeTo(1500, 1, "linear");
-                                        $("#msgTextoSpan").html(contImage + " fotos cargadas.");
-                                    }, 500);
+                                    // setTimeout(function () {
+                                    //     $("#msgTextoSpan").fadeIn(1000, "linear");
+                                    //     $("#msgTextoSpan").html(contImage + " fotos cargadas.");
+                                    //     $("#msgTexto").css("visibility", "visible").fadeIn(500, "linear");
+                                    // }, 500);
 
-                                    setTimeout(function () {
-                                        $("#msgTexto").fadeTo(0, 1, "linear").fadeTo(1500, 0, "linear");
-                                    }, 3000);
-                                    $("#msgTexto").css("z-index", 0);
+                                    // setTimeout(function () {
+                                    //     $("#msgTexto").css("visibility", "hidden").fadeOut(1500, "linear");
+                                    // }, 3000);
+                                    // $("#msgTexto").css("visibility", "hidden");
+                                    
+                                    // Swal.fire({
+                                    //     position: 'top-end',
+                                    //     icon: 'success',
+                                    //     title: contImage + " Fotos cargadas correctamente!!!",
+                                    //     showConfirmButton: false,
+                                    //     timer: 1500
+                                    // });
 
-                                    // alert(contImage + " Fotos cargadas correctamente!!!");
+                                    const Toast = Swal.mixin({
+                                        toast: true,
+                                        position: 'top-end',
+                                        showConfirmButton: false,
+                                        timer: 5000,
+                                        timerProgressBar: true,
+                                        didOpen: (toast) => {
+                                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                        }
+                                    });
+
+                                    Toast.fire({
+                                        icon: 'success',
+                                        title: contImage + " Fotos cargadas correctamente!!!"
+                                    });
+
                                 }
                             }
                         }
