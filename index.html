@@ -271,6 +271,7 @@
 
                         <label for="dpDato3">Dato 3:</label>
                         <input id="dpDato3" type="text" class="form-control form-control-sm" autocomplete="off"> -->
+                    </form>
 
                         <div class="row">
                             <div class="col-sm-2">
@@ -285,7 +286,6 @@
                                 <button type="submit" id="btnExport" class="btn btn-success mt-3 mb-2 direction" onclick="swDirectionMoveTramo = true; swRecorridoTramo = true;">Exportar <i class="fas fa-file-excel"></i></button>
                             </div>
                         </div>
-                    </form>
 
                     <hr>
 
@@ -787,16 +787,19 @@
         $("#dpProgresiva").val('');
         $("#dpCoordenada").val('');
         $("#dpComentario").val('');
-        $("#dpTipo").val('0').change();
+        $("#dpTipo").val('0');
         $("#dpDato1").val('');
         $("#dpDato2").val('');
-        $("#dpDato3").val('');   
+        $("#dpDato3").val('');
+        $("#dpComentario").focus();
     }
 
     function registrarDatosProgresiva(){
-        axios.get("http://localhost:62135/api/Access/HelloWorld/")
+        axios.get("http://noeliavera777-001-site1.itempurl.com/Api/access/HelloWorld")
+        // axios.get("http://noeliavera777-001-site1.itempurl.com/")
+        // axios.get("http://localhost:62135/api/Access/HelloWorld/")
         .then(response => {
-            console.log(response);
+            alert(response.message.toString());
         })
         .catch(e => {
             console.log(e);
