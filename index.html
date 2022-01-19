@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" href="./fonts/font-awesome.min.4.2.0.css" />
     <link rel='stylesheet' href='./css/bootstrap-min.4.0.0.css'>
+    <link rel="stylesheet" href="./css/float-label-v4.0.1.css">
     <script src="./js/UTMLatLng.js"></script>
 
     <script src="./js/font-awesome.min.5.0.11.js"></script>
@@ -16,6 +17,7 @@
     <script src="./js/aframe.min-1.0.4.js"></script>
 
     <script src="./js/sweetalert2@11.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 <body>
 
@@ -55,18 +57,29 @@
                     <li class="nav-item frame360 active" style="visibility:hidden;">
                         <a class="nav-link" href="#" id="btn_grid" onclick="crearGrilla();">Grilla <span class="sr-only">(current)</span></a>
                     </li>
+                    <li></li>
+                    <!-- <li class="nav-item files-load datosProgresiva active">
+                        <div class="nav-link">
+                            <input class="active" type="radio" id="radioMapa" style="width:20px;" name="radioMapaProgresiva" value="radioMapa" checked>
+                            <label for="radioMapa" style="color: white;">Mapa</label>
+                        </div>
+                        <div class="nav-link">
+                            <input type="radio" id="radioProgresiva" style="width:20px;" name="radioMapaProgresiva" value="radioProgresiva">
+                            <label for="radioProgresiva" style="color: white;">Datos Progresiva</label>
+                        </div>
+                    </li> -->
                     <!--<li class="nav-item active">
                         <a class="nav-link" href="#" id="btn_line" onclick="pintarLinea();">Linea <span class="sr-only">(current)</span></a>
                     </li>-->
                 </ul>
             </div>
         </nav>
-    
+        
+
         <style>
             /*.frame360:focus {
                 background-color:red;
             }*/
-    
             .nav-item.files-load:hover {
                 background-color: darkgray;
                 border-radius: 2px;
@@ -76,6 +89,52 @@
             }*/
             .nav-item * {
                 display: inline-block;
+            }
+        </style>
+        
+        <style>
+            /* Style the tab */
+            .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            }
+
+            /* Style the buttons inside the tab */
+            .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+            }
+
+            /* Change background color of buttons on hover */
+            .tab button:hover {
+            background-color: #ddd;
+            }
+
+            /* Create an active/current tablink class */
+            .tab button.active {
+            background-color: #ccc;
+            }
+
+            /* Style the tab content */
+            .tabcontent {
+            display: block;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+            }
+        </style>
+
+        <style>
+            .has-float-label label {
+                font-size: 100% !important;
+                opacity:1 !important;
             }
         </style>
 
@@ -101,11 +160,168 @@
         }
         </style> -->
     
+        <script>
+            function openCity(evt, cityName) {
+              var i, tabcontent, tablinks;
+              tabcontent = document.getElementsByClassName("tabcontent");
+              for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+              }
+              tablinks = document.getElementsByClassName("tablinks");
+              for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+              }
+              document.getElementById(cityName).style.display = "block";
+              evt.currentTarget.className += " active";
+            }
+            // openCity($("#Mapa").event, 'Mapa');
+        </script>
+
     <div class="container-fluid">
         <div class="row" >
             <div class="col-xl-6 col-md-6 col-sm-12" style="position:absolute; left:-15px; height: 81.5vh; width:100%;">
-                <div id="mapid" style="height: 104%; width: 103.5%; z-index: -1; border: 1px solid black;">
+                <!-- <div id="mapid" style="height: 104%; width: 103.5%; z-index: 1; border: 1px solid red;">
+                </div> -->
+                <div class="tab">
+                    <button class="tablinks active" onclick="openCity(event, 'Mapa')">Mapa</button>
+                    <button class="tablinks " onclick="openCity(event, 'DatosProgresivas')">DatosProgresivas</button>
+                  </div>
+                <div id="Mapa" class="tabcontent">
+                    <div id="mapid" style="height: 95%; width: 96.4%; margin-left:-13px !important;  position:absolute; z-index: 1; border: 1px solid gray;">
+                    </div>
+                  </div>
+                  
+                  <div id="DatosProgresivas" class="tabcontent">
+                    <form >
+                        <!-- <div class="form-group has-float-label">
+                            <input class="form-control form-control-sm" id="password" type="password" placeholder="••••••••"/>
+                            <label for="password">Password</label>
+                        </div> -->
+
+                        <!-- <div class="form-floating mb-3">
+                            <input id="dpProgresiva" type="text" class="form-control form-control-sm" autocomplete="off">
+                            <label for="dpProgresiva">Progresiva:</label>
+                        </div> -->
+                        
+                        <div class="form-group row" style="margin-bottom:0px !important;">
+                            <label for="dpProgresiva" class="col-sm-2 col-form-label text-right">Progresiva:</label>
+                            <div class="col-sm-10">
+                              <input type="text" class="form-control-sm form-control-plaintext" style="border:1px solid green;" id="dpProgresiva" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group row" style="margin-bottom:0px !important;">
+                            <label for="dpCoordenada" class="col-sm-2 col-form-label text-right">Coordenada:</label>
+                            <div class="col-sm-10">
+                              <input type="text" class="form-control-sm form-control-plaintext" id="dpCoordenada" style="border:1px solid green;" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group row" style="margin-bottom:0px !important;">
+                            <label for="dpComentario" class="col-sm-2 col-form-label text-right">Comentario:</label>
+                            <div class="col-sm-10">
+                              <input type="text" class="form-control-sm form-control-plaintext" id="dpComentario" style="border:1px solid green;" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="form-group row" style="margin-bottom:5px !important;">
+                            <label for="dpTipo" class="col-sm-2 col-form-label text-right">Tipo:</label>
+                            <div class="col-sm-10">
+                                <select class="custom-select" id="dpTipo">
+                                    <option value="0" selected>Choose...</option>
+                                    <option value="1">tipo One</option>
+                                    <option value="2">tipo Two</option>
+                                    <option value="3">tipo Three</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row" style="margin-bottom:0px !important;">
+                            <label for="dpDato1" class="col-sm-2 col-form-label text-right">Dato 1:</label>
+                            <div class="col-sm-10">
+                              <input type="text" class="form-control-sm form-control-plaintext" id="dpDato1" style="border:1px solid green;" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group row" style="margin-bottom:0px !important;">
+                            <label for="dpDato2" class="col-sm-2 col-form-label text-right">Dato 2:</label>
+                            <div class="col-sm-10">
+                              <input type="text" class="form-control-sm form-control-plaintext" id="dpDato2" style="border:1px solid green;" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group row" style="margin-bottom:0px !important;">
+                            <label for="dpDato3" class="col-sm-2 col-form-label text-right">Dato 3:</label>
+                            <div class="col-sm-10">
+                              <input type="text" class="form-control-sm form-control-plaintext" id="dpDato3" style="border:1px solid green;" autocomplete="off">
+                            </div>
+                        </div>
+
+
+                        <!-- <label for="dpProgresiva">Progresiva:</label>
+                        <input id="dpProgresiva" type="text" class="form-control form-control-sm" autocomplete="off">  -->
+
+                        <!-- <label for="dpCoordenada">Coordenada:</label>
+                        <input id="dpCoordenada" type="text" class="form-control form-control-sm" autocomplete="off">  -->
+
+                        <!-- <label for="dpComentario">Comentario:</label>
+                        <input id="dpComentario" type="text" class="form-control form-control-sm" autocomplete="off"> -->
+
+                        <!-- <label for="dpDato1">Dato 1:</label>
+                        <input id="dpDato1" type="text" class="form-control form-control-sm" autocomplete="off">
+
+                        <label for="dpDato2">Dato 2:</label>
+                        <input id="dpDato2" type="text" class="form-control form-control-sm" autocomplete="off">
+
+                        <label for="dpDato3">Dato 3:</label>
+                        <input id="dpDato3" type="text" class="form-control form-control-sm" autocomplete="off"> -->
+
+                        <div class="row">
+                            <div class="col-sm-2">
+                            </div>
+                            <div class="col-sm-2">
+                                <button id="btnSave" class="btn btn-primary mt-3 mb-2 direction" onclick="registrarDatosProgresiva();">Guardar <i class="fas fa-save"></i></button>
+                            </div>
+                            <div class="col-sm-2">
+                                <button id="btnClear" class="btn btn-default border-dark mt-3 mb-2 direction" onclick="limpiarDatosProgresiva();">Limpiar <i class="far fa-file"></i></button>
+                            </div>
+                            <div class="col-sm-6 text-right">
+                                <button type="submit" id="btnExport" class="btn btn-success mt-3 mb-2 direction" onclick="swDirectionMoveTramo = true; swRecorridoTramo = true;">Exportar <i class="fas fa-file-excel"></i></button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <hr>
+
+                    <table class="table table-sm table-bordered table-striped">
+                        <thead>
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Progresiva</th>
+                            <th scope="col">Coordenada</th>
+                            <th scope="col">Tipo</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <th scope="row">1</th>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                            <td>@mdo</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">2</th>
+                            <td>Jacob</td>
+                            <td>Thornton</td>
+                            <td>@fat</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">3</th>
+                            <td colspan="2">Larry the Bird</td>
+                            <td>@twitter</td>
+                          </tr>
+                        </tbody>
+                      </table>
+
                 </div>
+                  
+
             </div>
 
             <div class="col-xl-6 col-md-6 col-sm-12" style="position:absolute; right:15px; width:100%; height: 81.5vh;">
@@ -323,6 +539,7 @@
 
          #datos {
             font-size:11.5px !important;
+            margin-left: -30px !important;
         }
     </style>
 
@@ -332,25 +549,26 @@
                 <span id="datos"> <!--Progresiva=0--></span>
             </div>
 
-                <!--<div class="col-sm-3 mt-2 mb-2 ml-2">-->
-                <div class="col-xl">
-                    <button id="btnFirstImage" class="btn btn-sm btn-info align-middle navegation" onclick="nextImage(0);"><i class="fas fa-step-backward"></i></button>
-                    <button id="btnPreviewImage" class="btn btn-sm btn-info align-middle navegation" onclick='previewImage();'><i class="fa fa-arrow-alt-circle-left"></i></button>
-                    <input class="form-control-sm progresiva align-middle navegation" style="width: 80px;" type="text" id="txtProgresiva" name="txtProgresiva" placeholder="999+999" value="" pattern="\d{3}\+\d{3}" maxlength="7" alt="Ingrese progresiva y pulse Enter." required /> <!--title="La progresiva debe ser en el siguiente formato 999+999"-->
-                    <button id="btnNextImage" class="btn btn-sm btn-info align-middle navegation" onclick='nextImage();'><i class="fa fa-arrow-circle-right"></i></button>
-                    <button id="btnLastImage" class="btn btn-sm btn-info align-middle navegation" onclick="nextImage(contImage-1);"><i class="fas fa-step-forward"></i></button>
-                </div>
-    
-                <!--<div class="col-sm-3 mt-2 mb-2">-->
-                <div class="col-xl">
-                    <form id="frmRecorreTramo" onsubmit="recorrerTramo(); return false;">
-                        <button type="submit" id="btnBack" class="btn btn-sm btn-primary align-middle direction" onclick="swDirectionMoveTramo = false; swRecorridoTramo = true;"><i class="fas fa-backward"></i></button>
-                        <input class="form-control-sm progresiva align-middle" style="width: 80px;" type="text" id="txtProgIni" value="" name="txtProgIni" placeholder="" pattern="\d{3}\+\d{3}" title="La progresiva debe ser en el siguiente formato 999+999" maxlength="7" required />
-                        <button type="submit" id="btnPauseStop" class="btn btn-sm btn-primary align-middle pause" style="display:none;"><i class="fas fa-pause"></i></button>
-                        <input class="form-control-sm progresiva align-middle" style="width: 80px;" type="text" id="txtProgFin" value="" name="txtProgFin" placeholder="" pattern="\d{3}\+\d{3}" title="La progresiva debe ser en el siguiente formato 999+999" maxlength="7" required />
-                        <button type="submit" id="btnFront" class="btn btn-sm btn-primary align-middle direction" onclick="swDirectionMoveTramo = true; swRecorridoTramo = true;"><i class="fas fa-forward"></i></button>
-                    </form>
-                </div>
+                
+            <div class="col-xl">
+                <button id="btnFirstImage" class="btn btn-sm btn-info align-middle navegation" onclick="nextImage(0);"><i class="fas fa-step-backward"></i></button>
+                <button id="btnPreviewImage" class="btn btn-sm btn-info align-middle navegation" onclick='previewImage();'><i class="fa fa-arrow-alt-circle-left"></i></button>
+                <input class="form-control-sm progresiva align-middle navegation" style="width: 80px;" type="text" id="txtProgresiva" name="txtProgresiva" value="" maxlength="7" placeholder="999+999" alt="Ingrese progresiva y pulse Enter." title="La progresiva debe ser en el siguiente formato 999+999" required />
+                <!-- pattern="\d{3}\+\d{3}" -->
+                <button id="btnNextImage" class="btn btn-sm btn-info align-middle navegation" onclick='nextImage();'><i class="fa fa-arrow-circle-right"></i></button>
+                <button id="btnLastImage" class="btn btn-sm btn-info align-middle navegation" onclick="nextImage(contImage-1);"><i class="fas fa-step-forward"></i></button>
+            </div>
+            <div class="col-xl">
+                <form id="frmRecorreTramo" onsubmit="recorrerTramo(); return false;">
+                    <button type="submit" id="btnBack" class="btn btn-sm btn-primary align-middle direction" onclick="swDirectionMoveTramo = false; swRecorridoTramo = true;"><i class="fas fa-backward"></i></button>
+                    <input class="form-control-sm progresiva align-middle" style="width: 80px;" type="text" id="txtProgIni" value="" name="txtProgIni" placeholder="999+999" title="La progresiva debe ser en el siguiente formato 999+999" maxlength="7" required />
+                    <!-- pattern="\d{3}\+\d{3}" -->
+                    <button type="submit" id="btnPauseStop" class="btn btn-sm btn-primary align-middle pause" style="display:none;"><i class="fas fa-pause"></i></button>
+                    <input class="form-control-sm progresiva align-middle" style="width: 80px;" type="text" id="txtProgFin" value="" name="txtProgFin" placeholder="999+999" title="La progresiva debe ser en el siguiente formato 999+999" maxlength="7" required />
+                    <!-- pattern="\d{3}\+\d{3}" -->
+                    <button type="submit" id="btnFront" class="btn btn-sm btn-primary align-middle direction" onclick="swDirectionMoveTramo = true; swRecorridoTramo = true;"><i class="fas fa-forward"></i></button>
+                </form>
+            </div>
 
          </div>
         <style>
@@ -565,7 +783,29 @@
     }
 
     //------------------------------------------------------------------------
+    function limpiarDatosProgresiva(){
+        $("#dpProgresiva").val('');
+        $("#dpCoordenada").val('');
+        $("#dpComentario").val('');
+        $("#dpTipo").val('0').change();
+        $("#dpDato1").val('');
+        $("#dpDato2").val('');
+        $("#dpDato3").val('');   
+    }
+
+    function registrarDatosProgresiva(){
+        axios.get("http://localhost:62135/api/Access/HelloWorld/")
+        .then(response => {
+            console.log(response);
+        })
+        .catch(e => {
+            console.log(e);
+        });
+    }
+
+    //------------------------------------------------------------------------
     function recorrerTramo() {
+        debugger;
         var progIni = $("#txtProgIni").val().replace("+", " ");
         var progFin = $("#txtProgFin").val().replace("+", " ");
 
@@ -632,7 +872,19 @@
                                 indice = index;
                                 setTimeout(function () {
                                     drawVisorCanvas(elem, img, swDirectionFront);
-                                    $("#txtProgresiva").val(fileName.replace(" ", "+").split(".")[0]);
+
+                                    // debugger;
+                                    var varpro = Math.round(dato[indice]);
+                                    if(varpro.toString().length <= 3) {
+                                        varpro = "0+" + varpro.toString().padStart(3,"0");
+                                    }else if(varpro.toString().length >=4){
+                                        var km = Math.trunc(varpro / 1000);
+                                        varpro =  (km) + "+" + (varpro-(km*1000)).toString().padStart(3,"0");
+                                    }
+                                    
+                                    $("#txtProgresiva").val(varpro);
+
+                                    // $("#txtProgresiva").val(fileName.replace(" ", "+").split(".")[0]);
                                     try {
                                         drawMarkerMap();
                                     } catch (e) {
@@ -675,6 +927,7 @@
 
     //------------------------------------------------------------------------
     function previewImage() {
+        // debugger;
         try {
             if (indice > 0) {
                 if ($("#marcoAFrame").css("visibility") == "hidden") {
@@ -683,9 +936,25 @@
                     img.src = listaImagenes[indice].image;
                     img.onload = function () {
                         drawVisorCanvas(document.getElementById("visorFoto"), img, swDirectionFront);
-                        $("#txtProgresiva").val(listaImagenes[indice].name.replace(" ", "+").split(".")[0]);
+                        
+                        // jesus
+                        // debugger;
+                        var varpro = Math.round(dato[indice]);
+                        if(varpro.toString().length <= 3) {
+                            varpro = "0+" + varpro.toString().padStart(3,"0");
+                        }else if(varpro.toString().length >=4){
+                            var km = Math.trunc(varpro / 1000);
+                            varpro =  (km) + "+" + (varpro-(km*1000)).toString().padStart(3,"0");
+                        }
+                        
+                        $("#txtProgresiva").val(varpro);
                         $("#txtProgresiva").css("background-color", "white");
                         progresivaActual = $("#txtProgresiva").val();
+                        
+                        
+                        // $("#txtProgresiva").val(listaImagenes[indice].name.replace(" ", "+").split(".")[0]);
+                        // $("#txtProgresiva").css("background-color", "white");
+                        // progresivaActual = $("#txtProgresiva").val();
 
                         try {
                             drawMarkerMap();
@@ -742,19 +1011,33 @@
 
     //------------------------------------------------------------------------
     function nextImage(progresiva = null) {
+        // debugger;
         if (progresiva != null) {
             indice = progresiva - 1;
         }
 
         try {
-            if (indice < contImage - 1) {
+            if (indice <= contImage - 1) {
                 if ($("#marcoAFrame").css("visibility") == "hidden") {
-                    indice++;
+                    if(indice !== contImage-1){
+                        indice++;
+                    }
                     var img = new Image();
                     img.src = listaImagenes[indice].image;
                     img.onload = function () {
                         drawVisorCanvas(document.getElementById("visorFoto"), img, swDirectionFront);
-                        $("#txtProgresiva").val(listaImagenes[indice].name.replace(" ", "+").split(".")[0]);
+
+                        // jesus
+                        // debugger;
+                        var varpro = Math.round(dato[indice]);
+                        if(varpro.toString().length <= 3) {
+                            varpro = "0+" + varpro.toString().padStart(3,"0");
+                        }else if(varpro.toString().length >=4){
+                            var km = Math.trunc(varpro / 1000);
+                            varpro =  (km) + "+" + (varpro-(km*1000)).toString().padStart(3,"0");
+                        }
+                        
+                        $("#txtProgresiva").val(varpro);
                         $("#txtProgresiva").css("background-color", "white");
                         progresivaActual = $("#txtProgresiva").val();
 
@@ -775,9 +1058,11 @@
 
     //------------------------------------------------------------------------
     function drawMarkerMap() {
+        // debugger;
         var item = utm.convertLatLngToUtm(latlngs[indice]['lat'], latlngs[indice]['lng'], 10);
-        document.getElementById("datos").innerHTML = ` &nbsp;Latitud: ${Math.round(latlngs[indice]['lat'] * 1000000) / 1000000} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Longitud: ${Math.round(latlngs[indice]['lng'] * 1000000) / 1000000} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Este: ${Math.round(item['Easting'] * 100) / 100} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Norte: ${Math.round(item['Northing'] * 100) / 100}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Huso: ${item['ZoneNumber']} ${item['ZoneLetter']}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Altura: ${Math.trunc(latlngs[indice]['alt'])} mts. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Progresiva: ${Math.round(dato[indice])} mts.`;
+        document.getElementById("datos").innerHTML = `Latitud: ${Math.round(latlngs[indice]['lat'] * 1000000) / 1000000} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Longitud: ${Math.round(latlngs[indice]['lng'] * 1000000) / 1000000} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Este: ${Math.round(item['Easting'] * 100) / 100} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Norte: ${Math.round(item['Northing'] * 100) / 100}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Huso: ${item['ZoneNumber']} ${item['ZoneLetter']}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Altura: ${Math.trunc(latlngs[indice]['alt'])} mts. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Progresiva: ${Math.round(dato[indice])} mts.`;
 
+        // jesus2
         try {
             if (swInicio == false) {
                 if (indice == 0) {
@@ -873,6 +1158,7 @@
         control.addTo(mymap);
 
         control.loader.on('data:loaded', function (e) {
+            // debugger;
             gpxs = e.target._map;
             indgpx = e.layer._leaflet_id;
             latlngs = gpxs._layers[indgpx]._layers[indgpx - 1]._latlngs;
@@ -883,8 +1169,10 @@
             }
 
             $("#imgGPX").attr("src", "images/check.png");
-            accederOpcionesInterfaz(true);
-            $("#btnAcceso360").css("visibility", "visible").fadeTo(0, 0, "linear").fadeTo(500, 1, "linear");
+
+            // jesus
+            // accederOpcionesInterfaz(true);
+            // $("#btnAcceso360").css("visibility", "visible").fadeTo(0, 0, "linear").fadeTo(500, 1, "linear");
 
             swInicio = true;
 
@@ -899,6 +1187,7 @@
 
                 //---------------------------------------------------------
                 mymap.on('click', function (e) {
+                    // debugger;
                     var latClicklat;
                     var latClicklng;
                     latClicklat = e.latlng.lat;
@@ -909,10 +1198,11 @@
 
                     indice = listaLatLngClick.indexOf(parseFloat(masCercano));
 
-                    nextImage();
+                    // jesus1
+                    nextImage(indice);
 
                     item = utm.convertLatLngToUtm(latlngs[indice]['lat'], latlngs[indice]['lng'], 10);
-                    document.getElementById("datos").innerHTML = ` &nbsp;Latitud: ${Math.round(latlngs[indice]['lat'] * 1000000) / 1000000} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Longitud: ${Math.round(latlngs[indice]['lng'] * 1000000) / 1000000} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Este: ${Math.round(item['Easting'] * 100) / 100} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Norte: ${Math.round(item['Northing'] * 100) / 100}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Huso: ${item['ZoneNumber']} ${item['ZoneLetter']}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Altura: ${latlngs[indice]['alt']}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Progresiva: ${Math.round(dato[indice])} mts.`;
+                    document.getElementById("datos").innerHTML = `Latitud: ${Math.round(latlngs[indice]['lat'] * 1000000) / 1000000} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Longitud: ${Math.round(latlngs[indice]['lng'] * 1000000) / 1000000} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Este: ${Math.round(item['Easting'] * 100) / 100} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Norte: ${Math.round(item['Northing'] * 100) / 100}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Huso: ${item['ZoneNumber']} ${item['ZoneLetter']}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Altura: ${latlngs[indice]['alt']}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Progresiva: ${Math.round(dato[indice])} mts.`;
 
                     mymap.removeLayer(marker);
                     marker = new L.Marker([latlngs[indice]['lat'], latlngs[indice]['lng']], {});
@@ -921,52 +1211,21 @@
 
             }, 1000);
 
-            nextImage(0);
+            // jesus
+            //nextImage(0);
             swInicio = false;
 
 
             //Mostrar mensaje de carga de archivo gpx ----------------------------------------------
-            // Swal.fire({
-            //     position: 'top-end',
-            //     icon: 'success',
-            //     title: 'Mapa cargado correctamente',
-            //     showConfirmButton: false,
-            //     timer: 5000
-            // });
-
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
-
-            Toast.fire({
-                icon: 'success',
-                title: 'Mapa cargado correctamente'
-            });
-
-            // setTimeout(function () {
-            //     $("#msgTextoSpan").fadeIn(1000, "linear");
-            //     $("#msgTextoSpan").html("Mapa cargado correctamente");
-            //     $("#msgTexto").css("visibility", "visible").fadeIn(500, "linear");
-            // }, 500);
-
-            // setTimeout(function () {
-            //     $("#msgTexto").css("visibility", "hidden").fadeOut(1500, "linear");
-            // }, 3000);
-            // $("#msgTexto").css("visibility", "hidden");
+            sendMessageBox("Mapa cargado correctamente!!!", "success", 3000, "top-end");
 
         });
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////++++++++++++++++++++++++++
 
+    //------------------------------------------------------------------------
+    // Cargar progresivas
     //------------------------------------------------------------------------
     function handleFileSelect(e) {
         var files = e.target.files;
@@ -981,7 +1240,7 @@
             reader.onload = function () {
                 //alert(files[0].name);
                 var extensions = new RegExp(/(.csv)$/i);
-
+                // debugger;
                 if (!extensions.test(files[0].name)) {
                     throw 'Seleccione archivo del tipo: CSV';
                 } else {
@@ -991,49 +1250,44 @@
                     for (var i = 0; i < controls.length; i++) {
                         $(controls[i]).attr("disabled", false);
                     }
+                    nextImage();
+
+                    var varpro = Math.round(dato[0]);
+                    if(varpro.toString().length <= 3) {
+                        varpro = "0+" + varpro.toString().padStart(3,"0");
+                    }else if(varpro.toString().length >=4){
+                        var km = Math.trunc(varpro / 1000);
+                        varpro =  (km) + "+" + (varpro-(km*1000)).toString().padStart(3,"0");
+                    }
+                    var progIni = varpro;
+
+                    var varpro = Math.round(dato[contImage-1]);
+                    if(varpro.toString().length <= 3) {
+                        varpro = "0+" + varpro.toString().padStart(3,"0");
+                    }else if(varpro.toString().length >=4){
+                        var km = Math.trunc(varpro / 1000);
+                        varpro =  (km) + "+" + (varpro-(km*1000)).toString().padStart(3,"0");
+                    }
+                    var progFin = varpro;
+                    
+                    // jesus
+                    accederOpcionesInterfaz(true);
+                    $("#btnAcceso360").css("visibility", "visible").fadeTo(0, 0, "linear").fadeTo(500, 1, "linear");
+
+                    $("#txtProgIni").attr("placeholder", progIni);
+                    $("#txtProgFin").attr("placeholder", progFin);
+
                 }
             };
 
             // Mostrar mensaje de carga de archivo de progresivas ------------------------------------
-            // setTimeout(function () {
-            //     $("#msgTextoSpan").fadeIn(1000, "linear");
-            //     $("#msgTextoSpan").html("Progresivas cargado correctamente.");
-            //     $("#msgTexto").css("visibility", "visible").fadeIn(500, "linear");
-            // }, 500);
-
-            // setTimeout(function () {
-            //     $("#msgTexto").css("visibility", "hidden").fadeOut(1500, "linear");
-            // }, 3000);
-            // $("#msgTexto").css("visibility", "hidden");
-
-            // Swal.fire({
-            //     position: 'top-end',
-            //     icon: 'success',
-            //     title: 'Progresivas cargado correctamente',
-            //     showConfirmButton: false,
-            //     timer: 1500
-            // });
-
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
-
-            Toast.fire({
-                icon: 'success',
-                title: 'Progresivas cargadas correctamente'
-            });
+            sendMessageBox("Progresivas cargadas correctamente!!!", "success", 3000, "top-end");
             
         }
     }
 
+    //------------------------------------------------------------------------    
+    // Cargar fotos de 360°
     //------------------------------------------------------------------------
     function handleImagesSelect(e) {
         listaImagenes = [];
@@ -1082,52 +1336,25 @@
                                 else {
                                     recreaEscenaCodigo();
 
-                                    nextImage();
+                                    // nextImage();
 
                                     //Dar formato a controles de navegacion ---------------------------------------
-                                    var progIni = listaImagenes[0].name.split(".")[0].replace(" ", "+");
-                                    var progFin = listaImagenes[contImage-1].name.split(".")[0].replace(" ", "+");
+                                    
+                                    // jesus
+
+                                    // var progIni = listaImagenes[0].name.split(".")[0].replace(" ", "+");
+                                    // var progFin = listaImagenes[contImage-1].name.split(".")[0].replace(" ", "+");
+                                    var progIni = "9+999";
+                                    var progFin = "9+999";
+                                    
+
                                     $("#txtProgIni").attr("placeholder", progIni);
                                     $("#txtProgFin").attr("placeholder", progFin);
 
                                     $("#imgImagenes").attr("src", "images/check.png");
 
                                     // Mostrar mensaje de carga de archivo de fotos ----------------------------------------
-                                    // setTimeout(function () {
-                                    //     $("#msgTextoSpan").fadeIn(1000, "linear");
-                                    //     $("#msgTextoSpan").html(contImage + " fotos cargadas.");
-                                    //     $("#msgTexto").css("visibility", "visible").fadeIn(500, "linear");
-                                    // }, 500);
-
-                                    // setTimeout(function () {
-                                    //     $("#msgTexto").css("visibility", "hidden").fadeOut(1500, "linear");
-                                    // }, 3000);
-                                    // $("#msgTexto").css("visibility", "hidden");
-                                    
-                                    // Swal.fire({
-                                    //     position: 'top-end',
-                                    //     icon: 'success',
-                                    //     title: contImage + " Fotos cargadas correctamente!!!",
-                                    //     showConfirmButton: false,
-                                    //     timer: 1500
-                                    // });
-
-                                    const Toast = Swal.mixin({
-                                        toast: true,
-                                        position: 'top-end',
-                                        showConfirmButton: false,
-                                        timer: 5000,
-                                        timerProgressBar: true,
-                                        didOpen: (toast) => {
-                                            toast.addEventListener('mouseenter', Swal.stopTimer)
-                                            toast.addEventListener('mouseleave', Swal.resumeTimer)
-                                        }
-                                    });
-
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: contImage + " Fotos cargadas correctamente!!!"
-                                    });
+                                    sendMessageBox(contImage + " Fotos cargadas correctamente!!!", "success", 4000, "top-end");
 
                                 }
                             }
@@ -1147,6 +1374,27 @@
             }
         }
     }
+
+    //----------------------------------------------------------------------
+    function sendMessageBox(pMessage, pTipo, pTimer, pPosition){
+        const Toast = Swal.mixin({
+            toast: true,
+            position: pPosition,
+            showConfirmButton: false,
+            timer: pTimer,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        Toast.fire({
+            icon: pTipo,
+            title: pMessage
+        });
+    }
+
 
     // --------------------------------------------------------------------------------------------------
     function accederOpcionesInterfaz(swView) {
@@ -1175,7 +1423,21 @@
     // Cargado el DOM------------------------------------------------------------------------------------
 
     $(function () {
-        $(".progresiva").mask("999+000");
+        // $(".progresiva").mask("999+999");
+        // function openCity(evt, cityName) {
+        //       var i, tabcontent, tablinks;
+        //       tabcontent = document.getElementsByClassName("tabcontent");
+        //       for (i = 0; i < tabcontent.length; i++) {
+        //         tabcontent[i].style.display = "none";
+        //       }
+        //       tablinks = document.getElementsByClassName("tablinks");
+        //       for (i = 0; i < tablinks.length; i++) {
+        //         tablinks[i].className = tablinks[i].className.replace(" active", "");
+        //       }
+        //       document.getElementById(cityName).style.display = "block";
+        //       evt.currentTarget.className += " active";
+        // }
+        // openCity($("#Mapa").event, 'Mapa');
 
         $('#file-input').change(handleFileSelect);
         $('#files-input').change(handleImagesSelect);
@@ -1287,24 +1549,77 @@
         //------------------------------------------------------------------------
         document.getElementById("txtProgresiva").addEventListener("keypress", function (e) {
             if (e.keyCode == 13) {
-                var progIni = $("#txtProgresiva").val().replace("+", " ");
-                var progresiva = listaImagenes.findIndex(el => el.name.slice(0, el.name.indexOf(".")) == progIni.replace("+", " "));
-
-                if (progresiva != -1) {
-                    indiceProgIni = progresiva;
-                    nextImage(indiceProgIni);
-                    $("#txtProgresiva").css("background-color", "white");
+                let progresiva = $("#txtProgresiva").val();
+                if(progresiva.includes("+")) {
+                    document.getElementById("txtProgresiva").select();
+                    document.getElementById("txtProgresiva").focus();
                 } else {
-                    $("#txtProgresiva").css("background-color", "red");
-                    setTimeout(function () {
-                        $("#txtProgresiva").css("background-color", "white");
-                        $("#txtProgresiva").val(progresivaActual);
-                    }, 1000);
-
+                    darFormatoProgresiva($("#txtProgresiva"), true);
                 }
-                //_prog
             }
         });
+        
+        //------------------------------------------------------------------------
+        document.getElementById("txtProgIni").addEventListener("keypress", function (e) {
+            if (e.keyCode == 13) {
+                let progresiva = $("#txtProgIni").val();
+                if(progresiva.includes("+")) {
+                    document.getElementById("txtProgIni").select();
+                    document.getElementById("txtProgIni").focus();
+                } else {
+                    darFormatoProgresiva($("#txtProgIni"), true);
+                }
+            }
+        });
+
+        //------------------------------------------------------------------------
+        document.getElementById("txtProgFin").addEventListener("keypress", function (e) {
+            if (e.keyCode == 13) {
+                let progresiva = $("#txtProgFin").val();
+                if(progresiva.includes("+")) {
+                    document.getElementById("txtProgFin").select();
+                    document.getElementById("txtProgFin").focus();
+                } else {
+                    darFormatoProgresiva($("#txtProgFin"), false);
+                }
+            }
+        });
+
+        //------------------------------------------------------------------------
+        function darFormatoProgresiva(txtProgX, swGoProgresiva){
+        //------------------------------------------------------------------------
+        // jesus3    
+            // debugger;
+            var varpro = txtProgX.val();
+            if(varpro.toString().length <= 3) {
+                varpro = "0+" + varpro.toString().padStart(3,"0");
+            }else if(varpro.toString().length >=4){
+                var km = Math.trunc(varpro / 1000);
+                varpro =  (km) + "+" + (varpro-(km*1000)).toString().padStart(3,"0");
+            }
+            var progIni = varpro;
+            txtProgX.val(varpro);
+
+            var progresiva = listaImagenes.findIndex(
+                el => el.name.slice(0, el.name.indexOf(".")) == progIni
+                // el => el.name.slice(0, el.name.indexOf(".")) == progIni.replace("+", " ")
+            );
+
+            if (progresiva != -1) {
+                if(swGoProgresiva == true){
+                    indiceProgX = progresiva;
+                    nextImage(indiceProgX);
+                }
+                txtProgX.css("background-color", "white");
+            } else {
+                txtProgX.css("background-color", "red");
+                setTimeout(function () {
+                    txtProgX.css("background-color", "white");
+                    txtProgX.val();
+                }, 1000);
+
+            }
+        }
 
         //------------------------------------------------------------------------
         document.getElementById("btnPauseStop").addEventListener("click", function () {
